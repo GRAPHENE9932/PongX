@@ -1,51 +1,33 @@
 /*
- * PongX main function
+ * <one line to give the program's name and a brief idea of what it does.>
  * Copyright (C) 2021  Artem Kliminskyi <artemklim50@gmail.com>
- *
+ * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <iostream>
+#pragma once
 
-#include <SFML/Graphics.hpp>
+#include "UIControl.hpp"
 
-int main() {
-	sf::RenderWindow main_window(sf::VideoMode(600, 360), "PongX");
+class FPSMeter : public UIControl {
+public:
+    FPSMeter(sf::RenderWindow* window, unsigned int font_size, sf::Color color);
 
-	//Main loop
-	while (main_window.isOpen()) {
-		//Handle events
-		sf::Event event;
-		while (main_window.pollEvent(event)) {
-			switch (event.type) {
-				case sf::Event::EventType::Closed: { //Close event
-					main_window.close();
-					break;
-				}
-				default: {
-					break;
-				}
-			}
-		}
+	void render() override;
+private:
+	sf::Text sfml_text;
 
-		//Render stuff
-		main_window.clear();
-
-		//Render here
-
-		main_window.display();
-	}
-
-    return 0;
-}
+	sf::Clock clock;
+	sf::Font font;
+};
