@@ -18,7 +18,34 @@
 
 #include <iostream>
 
-int main(int argc, char **argv) {
-    std::cout << "Hello, world!" << std::endl;
+#include <SFML/Graphics.hpp>
+
+int main() {
+	sf::RenderWindow main_window(sf::VideoMode(600, 360), "PongX");
+
+	//Main loop
+	while (main_window.isOpen()) {
+		//Handle events
+		sf::Event event;
+		while (main_window.pollEvent(event)) {
+			switch (event.type) {
+				case sf::Event::EventType::Closed: { //Close event
+					main_window.close();
+					break;
+				}
+				default: {
+					break;
+				}
+			}
+		}
+
+		//Render stuff
+		main_window.clear();
+
+		//Render here
+
+		main_window.display();
+	}
+
     return 0;
 }
