@@ -9,9 +9,12 @@ if (MSVC)
 #And C++17 for GCC
 elseif(CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_CXX_STANDARD 17)
+	#Enable pthread for GCC
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 else()
 	message(SEND_ERROR "Unknown compiler")
 endif()
+
 
 #Find source files
 file(GLOB_RECURSE pongx_SRC ${PROJECT_SOURCE_DIR}/src/*.cpp)

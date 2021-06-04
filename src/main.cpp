@@ -17,22 +17,51 @@
  */
 
 #include <iostream>
+#include <thread>
 
 #include <SFML/Graphics.hpp>
 
 #include "UI/UIControl.hpp"
 #include "UI/FPSMeter.hpp"
 
-///UI controls list
+///Global UI controls list
 std::vector<UIControl*> ui_list;
+
+bool stop_rendering = false;
+
+void rendering(sf::RenderWindow* window) {
+	window->setActive(true); //Activate window
+
+	//Render loop
+	while (window->isOpen()) {
+		//Check if stop requested
+		if (stop_rendering)
+			break;
+
+		//Render stuff
+		window->clear();
+
+		//BEGIN render stuff
+		//Render UI
+		for (unsigned int i = 0; i < ui_list.size(); i++)
+			ui_list[i]->render();
+		//END render stuff
+
+		window->display();
+	}
+}
 
 int main() {
 	//Create a window
 	sf::RenderWindow main_window = sf::RenderWindow(sf::VideoMode(1280, 720), "PongX");
+	main_window.setActive(false); //And deactivate it
 
 	//Add FPS ui control
 	FPSMeter* fps_meter = new FPSMeter(&main_window, 72, sf::Color::White);
 	ui_list.push_back(fps_meter);
+
+	//Start render thread
+	std::thread render_thread(rendering, &main_window);
 
 	//Main loop
 	while (main_window.isOpen()) {
@@ -41,7 +70,9 @@ int main() {
 		while (main_window.pollEvent(event)) {
 			switch (event.type) {
 				case sf::Event::EventType::Closed: { //Close event
-					main_window.close();
+					stop_rendering = true; //Request stop to rendering thread
+					render_thread.join(); //Wait
+					main_window.close(); //Close
 					break;
 				}
 				default: { //Other
@@ -49,17 +80,6 @@ int main() {
 				}
 			}
 		}
-
-		//Render stuff
-		main_window.clear();
-
-		//BEGIN render stuff
-		//Render UI
-		for (unsigned int i = 0; i < ui_list.size(); i++)
-			ui_list[i]->render();
-		//END render stuff
-
-		main_window.display();
 	}
 
     return 0;
