@@ -23,9 +23,13 @@
 
 #include "UI/UIControl.hpp"
 #include "UI/FPSMeter.hpp"
+#include "Pages/Page.hpp"
+#include "Pages/MainMenuPage.hpp"
 
 ///Global UI controls list
 std::vector<UIControl*> ui_list;
+///Current page
+Page* page;
 
 int main() {
 	//Create a window
@@ -34,6 +38,9 @@ int main() {
 	//Add FPS ui control
 	FPSMeter* fps_meter = new FPSMeter(&main_window, { 0, 0 }, 72, sf::Color::White);
 	ui_list.push_back(fps_meter);
+
+	//Create page
+	page = new MainMenuPage(&main_window);
 
 	//Main loop
 	while (main_window.isOpen()) {
@@ -58,6 +65,9 @@ int main() {
 		//Render UI
 		for (unsigned int i = 0; i < ui_list.size(); i++)
 			ui_list[i]->render();
+
+		//Render page
+		page->render();
 		//END render stuff
 
 		main_window.display();
