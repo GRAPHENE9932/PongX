@@ -1,5 +1,5 @@
 /*
- * PongX FPS meter
+ * PongX button
  * Copyright (C) 2021  Artem Kliminskyi <artemklim50@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -11,32 +11,35 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "FPSMeter.hpp"
 
-FPSMeter::FPSMeter(sf::RenderWindow* window, sf::Vector2f position, unsigned int font_size, sf::Color color) {
-	this->window = window;
+#pragma once
 
-	//Set basic parameters of text
-	text.setCharacterSize(font_size);
-	text.setFillColor(color);
-	text.setPosition(position);
-	//Load and set font
-	font.loadFromFile("default.ttf");
-	text.setFont(font);
-}
+#include "UIControl.hpp"
 
-void FPSMeter::render() {
-	//Get elapsed time
-	sf::Time elapsed = clock.getElapsedTime();
-	clock.restart();
-	//Calculate FPS
-	unsigned short fps = 1.0F / elapsed.asSeconds();
+class Button : public UIControl {
+public:
+	Button(sf::RenderWindow* window, sf::Vector2f position, sf::Vector2f size, sf::String title,
+		   unsigned int font_size, sf::Color color, sf::Color bg_color, sf::Font* font);
 
-	//Display
-	text.setString(std::to_string(fps) + " FPS");
-	window->draw(text);
-}
+	void set_callback(std::function<void()> on_click);
+
+	void render() override;
+
+private:
+	sf::RectangleShape main_rect;
+	sf::Text text;
+
+	sf::Vector2f position, size;
+	sf::Color color, bg_color;
+
+	std::function<void()> on_click;
+
+	///Is mouse was pressed on the last frame?
+	bool pressed_before = false;
+
+	inline bool is_mouse_in_area() const;
+};

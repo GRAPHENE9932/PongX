@@ -22,11 +22,12 @@
 
 class FPSMeter : public UIControl {
 public:
-    FPSMeter(sf::RenderWindow* window, unsigned int font_size, sf::Color color);
+	FPSMeter(sf::RenderWindow* window, sf::Vector2f position, unsigned int font_size, sf::Color color);
 
 	void render() override;
+
 private:
-	sf::Text sfml_text;
+	sf::Text text;
 
 	sf::Clock clock;
 	sf::Font font;
