@@ -25,8 +25,9 @@ MainMenuPage::MainMenuPage(sf::RenderWindow* window) {
 	font.loadFromFile("default.ttf");
 
 	//Initialize the play button
-	Button* play_button = new Button(window, { 500, 500 }, { 500, 200 }, "Play", 72, sf::Color::White,
-									 sf::Color::Black, &font);
+	Button* play_button = new Button(window, { 0, 0 }, UIControl::CenterCenter, { 500, 200 }, "Play", 72,
+									 sf::Color::White, sf::Color::Black, &font);
+
 	play_button->set_callback([this] { play_clicked(); });
 	ui_list.push_back(play_button);
 }

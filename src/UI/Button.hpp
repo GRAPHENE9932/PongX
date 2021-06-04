@@ -22,8 +22,9 @@
 
 class Button : public UIControl {
 public:
-	Button(sf::RenderWindow* window, sf::Vector2f position, sf::Vector2f size, sf::String title,
-		   unsigned int font_size, sf::Color color, sf::Color bg_color, sf::Font* font);
+	Button(sf::RenderWindow* window, sf::Vector2f relative_position, UIControl::Relativity relative_to,
+		   sf::Vector2f size, sf::String title, unsigned int font_size, sf::Color color,
+		   sf::Color bg_color, sf::Font* font);
 
 	void set_callback(std::function<void()> on_click);
 
@@ -33,7 +34,6 @@ private:
 	sf::RectangleShape main_rect;
 	sf::Text text;
 
-	sf::Vector2f position, size;
 	sf::Color color, bg_color;
 
 	std::function<void()> on_click;

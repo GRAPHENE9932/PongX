@@ -21,9 +21,23 @@
 #include <SFML/Graphics.hpp>
 
 class UIControl {
+
 public:
-	sf::Vector2f position;
-	sf::RenderWindow* window;
+	enum Relativity : unsigned char {
+		LeftTop, LeftCenter, LeftBottom,
+		CenterTop, CenterCenter, CenterBottom,
+		RightTop, RightCenter, RightBottom
+	};
+
+	float pos_x() const;
+	float pos_y() const;
+	sf::Vector2f position() const;
 
 	virtual void render() = 0;
+
+protected:
+	Relativity relative_to;
+	sf::Vector2f relative_position;
+	sf::Vector2f size = { 0, 0 };
+	sf::RenderWindow* window;
 };

@@ -36,7 +36,7 @@ int main() {
 	sf::RenderWindow main_window = sf::RenderWindow(sf::VideoMode(1280, 720), "PongX");
 
 	//Add FPS ui control
-	FPSMeter* fps_meter = new FPSMeter(&main_window, { 0, 0 }, 72, sf::Color::White);
+	FPSMeter* fps_meter = new FPSMeter(&main_window, { 0, 0 }, UIControl::LeftTop, 72, sf::Color::White);
 	ui_list.push_back(fps_meter);
 
 	//Create page

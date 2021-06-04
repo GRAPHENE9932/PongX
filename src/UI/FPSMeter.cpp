@@ -17,13 +17,16 @@
  */
 #include "FPSMeter.hpp"
 
-FPSMeter::FPSMeter(sf::RenderWindow* window, sf::Vector2f position, unsigned int font_size, sf::Color color) {
+FPSMeter::FPSMeter(sf::RenderWindow* window, sf::Vector2f relative_position, UIControl::Relativity relative_to,
+				   unsigned int font_size, sf::Color color) {
 	this->window = window;
+	this->relative_position = relative_position;
+	this->relative_to = relative_to;
 
 	//Set basic parameters of text
 	text.setCharacterSize(font_size);
 	text.setFillColor(color);
-	text.setPosition(position);
+	text.setPosition(position());
 	//Load and set font
 	font.loadFromFile("default.ttf");
 	text.setFont(font);

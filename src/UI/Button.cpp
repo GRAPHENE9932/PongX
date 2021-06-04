@@ -18,12 +18,14 @@
 
 #include "Button.hpp"
 
-Button::Button(sf::RenderWindow* window, sf::Vector2f position, sf::Vector2f size, sf::String title,
-			   unsigned int font_size, sf::Color color, sf::Color bg_color, sf::Font* font) {
+Button::Button(sf::RenderWindow* window, sf::Vector2f relative_position, UIControl::Relativity relative_to,
+			   sf::Vector2f size, sf::String title, unsigned int font_size, sf::Color color,
+			   sf::Color bg_color, sf::Font* font) {
 	this->window = window;
 	this->color = color;
 	this->bg_color = bg_color;
-	this->position = position;
+	this->relative_position = relative_position;
+	this->relative_to = relative_to;
 	this->size = size;
 
 	//Setup the main rect
@@ -31,7 +33,7 @@ Button::Button(sf::RenderWindow* window, sf::Vector2f position, sf::Vector2f siz
 	main_rect.setOutlineColor(color);
 	main_rect.setOutlineThickness(3);
 	main_rect.setFillColor(bg_color);
-	main_rect.setPosition(position);
+	main_rect.setPosition(position());
 
 	//Setup the text
 	text.setString(title);
@@ -41,8 +43,8 @@ Button::Button(sf::RenderWindow* window, sf::Vector2f position, sf::Vector2f siz
 	//Calculate position manually for central alignment
 	auto text_bounds = text.getLocalBounds();
 	sf::Vector2f text_position = {
-		position.x + (size.x - text_bounds.width) / 2,
-		position.y + (size.y - text_bounds.height) / 2
+		pos_x() + (size.x - text_bounds.width) / 2,
+		pos_y() + (size.y - text_bounds.height) / 2
 	};
 	text.setPosition(text_position);
 }
@@ -81,8 +83,8 @@ void Button::render() {
 }
 
 inline bool Button::is_mouse_in_area() const {
-	return (sf::Mouse::getPosition(*window).x >= position.x) &&
-		(sf::Mouse::getPosition(*window).x <= position.x + size.x) &&
-		(sf::Mouse::getPosition(*window).y >= position.y) &&
-		(sf::Mouse::getPosition(*window).y <= position.y + size.y);
+	return (sf::Mouse::getPosition(*window).x >= pos_x()) &&
+	(sf::Mouse::getPosition(*window).x <= pos_x() + size.x) &&
+	(sf::Mouse::getPosition(*window).y >= pos_y()) &&
+	(sf::Mouse::getPosition(*window).y <= pos_y() + size.y);
 }
