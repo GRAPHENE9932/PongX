@@ -40,4 +40,5 @@ private:
 	GameType game_type;
 
 	void start_click();
+	void back_click();
 };

@@ -55,6 +55,8 @@ void MainMenuPage::render() {
 void MainMenuPage::local_multiplayer_clicked() {
 	//Create new StartGamePage
 	StartGamePage* new_page = new StartGamePage(window, StartGamePage::LocalMultiplayer);
+	//Give this callback to the new page
+	new_page->set_switch_page_callback(switch_page_callback);
 	//Execute callback
 	switch_page_callback(new_page);
 }
