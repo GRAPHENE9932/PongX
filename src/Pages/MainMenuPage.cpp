@@ -17,6 +17,7 @@
  */
 
 #include "../UI/Button.hpp"
+#include "../UI/Label.hpp"
 #include "StartGamePage.hpp"
 #include "MainMenuPage.hpp"
 
@@ -25,13 +26,20 @@ MainMenuPage::MainMenuPage(sf::RenderWindow* window) {
 	//Initialize font
 	font.loadFromFile("default.ttf");
 
+	//BEGIN UI
+	//Initialize the logo label
+	Label* logo_label = new Label(window, "PongX", { 0, 0 }, UIControl::CenterTop, 120, sf::Color::White, &font);
 	//Initialize the local multiplayer button
 	Button* local_multiplayer_button = new Button(window, { 0, 0 }, UIControl::CenterCenter, { 500, 100 },
 												  "Local multiplayer", 48, sf::Color::White, sf::Color::Black,
 												   &font);
 
 	local_multiplayer_button->set_callback([this] { local_multiplayer_clicked(); });
+
+	//Add controls to the list
+	ui_list.push_back(logo_label);
 	ui_list.push_back(local_multiplayer_button);
+	//END UI
 }
 
 MainMenuPage::~MainMenuPage() {

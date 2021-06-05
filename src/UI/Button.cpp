@@ -1,5 +1,5 @@
 /*
- * PongX button
+ * PongX UI button
  * Copyright (C) 2021  Artem Kliminskyi <artemklim50@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 Button::Button(sf::RenderWindow* window, sf::Vector2f relative_position, UIControl::Relativity relative_to,
 			   sf::Vector2f size, sf::String title, unsigned int font_size, sf::Color color,
 			   sf::Color bg_color, sf::Font* font) {
-	this->window = window;
+	this->window = window; //Assign fields
 	this->color = color;
 	this->bg_color = bg_color;
 	this->relative_position = relative_position;

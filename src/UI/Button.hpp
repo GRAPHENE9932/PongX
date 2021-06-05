@@ -1,5 +1,5 @@
 /*
- * PongX button
+ * PongX UI button
  * Copyright (C) 2021  Artem Kliminskyi <artemklim50@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
