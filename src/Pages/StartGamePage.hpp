@@ -1,5 +1,5 @@
 /*
- * PongX page class
+ * PongX start game page
  * Copyright (C) 2021  Artem Kliminskyi <artemklim50@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,26 @@
 
 #pragma once
 
-#include <functional>
+#include "../UI/UIControl.hpp"
+#include "Page.hpp"
 
-class Page {
+class StartGamePage : public Page {
 public:
-	bool enabled;
+	enum GameType : unsigned char {
+		LocalMultiplayer, Singleplayer, LocalNetworkMultiplayer
+	};
 
-	virtual ~Page() { }; //Empty destructor
+	StartGamePage(sf::RenderWindow* window, GameType game_type);
+	~StartGamePage() override;
 
-	virtual void render() = 0;
+	void render() override;
 
-	void set_switch_page_callback(std::function<void(Page*)> switch_page_callback) {
-		this->switch_page_callback = switch_page_callback;
-	}
+private:
+	///UI controls list for this page
+	std::vector<UIControl*> ui_list;
+	sf::Font font;
 
-protected:
-	std::function<void(Page*)> switch_page_callback;
-	sf::RenderWindow* window;
+	GameType game_type;
+
+	void start_click();
 };

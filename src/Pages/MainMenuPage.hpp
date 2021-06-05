@@ -20,12 +20,13 @@
 
 #include <vector>
 
-#include "Page.hpp"
 #include "../UI/UIControl.hpp"
+#include "Page.hpp"
 
 class MainMenuPage : public Page {
 public:
 	MainMenuPage(sf::RenderWindow* window);
+	~MainMenuPage() override;
 
 	void render() override;
 
@@ -34,5 +35,5 @@ private:
 	std::vector<UIControl*> ui_list;
 	sf::Font font;
 
-	void play_clicked();
+	void local_multiplayer_clicked();
 };

@@ -67,7 +67,11 @@ void Button::render() {
 		text.setFillColor(color);
 	}
 
-	//Accept click
+	//Render text and rect
+	window->draw(main_rect);
+	window->draw(text);
+
+	//Accept click after all. Because on_click() can be destructive for this button
 	if (pressed && is_mouse_in_area() && !pressed_before)
 		on_click();
 
@@ -76,10 +80,6 @@ void Button::render() {
 		pressed_before = true;
 	else
 		pressed_before = false;
-
-	//Render text and rect
-	window->draw(main_rect);
-	window->draw(text);
 }
 
 inline bool Button::is_mouse_in_area() const {

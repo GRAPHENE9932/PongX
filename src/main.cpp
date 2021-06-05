@@ -17,7 +17,6 @@
  */
 
 #include <iostream>
-#include <thread>
 
 #include <SFML/Graphics.hpp>
 
@@ -34,6 +33,7 @@ Page* page;
 int main() {
 	//Create a window
 	sf::RenderWindow main_window = sf::RenderWindow(sf::VideoMode(1280, 720), "PongX");
+	main_window.setFramerateLimit(60);
 
 	//Add FPS ui control
 	FPSMeter* fps_meter = new FPSMeter(&main_window, { 0, 0 }, UIControl::LeftTop, 72, sf::Color::White);
@@ -41,6 +41,12 @@ int main() {
 
 	//Create page
 	page = new MainMenuPage(&main_window);
+	page->set_switch_page_callback( //Set callback on switch page
+		[](Page* new_page) { //Delete current page and set new
+			delete page;
+			page = new_page;
+		}
+	);
 
 	//Main loop
 	while (main_window.isOpen()) {

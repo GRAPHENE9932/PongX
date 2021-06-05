@@ -1,5 +1,5 @@
 /*
- * PongX main menu page
+ * PongX start game page
  * Copyright (C) 2021  Artem Kliminskyi <artemklim50@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,35 +18,30 @@
 
 #include "../UI/Button.hpp"
 #include "StartGamePage.hpp"
-#include "MainMenuPage.hpp"
 
-MainMenuPage::MainMenuPage(sf::RenderWindow* window) {
+StartGamePage::StartGamePage(sf::RenderWindow* window, GameType game_type) {
 	this->window = window;
+	this->game_type = game_type;
 	//Initialize font
 	font.loadFromFile("default.ttf");
 
-	//Initialize the local multiplayer button
-	Button* local_multiplayer_button = new Button(window, { 0, 0 }, UIControl::CenterCenter, { 500, 100 },
-												  "Local multiplayer", 48, sf::Color::White, sf::Color::Black,
-												   &font);
-
-	local_multiplayer_button->set_callback([this] { local_multiplayer_clicked(); });
-	ui_list.push_back(local_multiplayer_button);
+	//Initialize start game button
+	Button* start_button = new Button(window, { -600, -300 }, UIControl::RightBottom, { 500, 200 }, "Start",
+									  72, sf::Color::White, sf::Color::Black, &font);
+	start_button->set_callback([this]{ start_click(); });
+	ui_list.push_back(start_button);
 }
 
-MainMenuPage::~MainMenuPage() {
+StartGamePage::~StartGamePage() {
 
 }
 
-void MainMenuPage::render() {
+void StartGamePage::render() {
 	//Render UI
 	for (unsigned int i = 0; i < ui_list.size(); i++)
 		ui_list[i]->render();
 }
 
-void MainMenuPage::local_multiplayer_clicked() {
-	//Create new StartGamePage
-	StartGamePage* new_page = new StartGamePage(window, StartGamePage::LocalMultiplayer);
-	//Execute callback
-	switch_page_callback(new_page);
+void StartGamePage::start_click() {
+
 }
