@@ -40,8 +40,9 @@ Button::Button(sf::RenderWindow* window, sf::Vector2f relative_position, UIContr
 	text.setFont(*font);
 	text.setCharacterSize(font_size);
 	text.setFillColor(color);
+	text.setPosition( {0, 0});
 	//Calculate position manually for central alignment
-	auto text_bounds = text.getLocalBounds();
+	auto text_bounds = text.getLocalBounds(); //TODO: memory leak here
 	sf::Vector2f text_position = {
 		pos_x() + (size.x - text_bounds.width) / 2,
 		pos_y() + (size.y - text_bounds.height) / 2
@@ -83,8 +84,12 @@ void Button::render() {
 }
 
 inline bool Button::is_mouse_in_area() const {
-	return (sf::Mouse::getPosition(*window).x >= pos_x()) &&
+	//Get mouse position in ints and convert it in floats
+	auto mouse_pos_i = sf::Mouse::getPosition(*window);
+	sf::Vector2f mouse_pos = { static_cast<float>(mouse_pos_i.x), static_cast<float>(mouse_pos_i.y) };
+	return main_rect.getGlobalBounds().contains(mouse_pos);
+	/*return (sf::Mouse::getPosition(*window).x >= pos_x()) &&
 	(sf::Mouse::getPosition(*window).x <= pos_x() + size.x) &&
 	(sf::Mouse::getPosition(*window).y >= pos_y()) &&
-	(sf::Mouse::getPosition(*window).y <= pos_y() + size.y);
+	(sf::Mouse::getPosition(*window).y <= pos_y() + size.y);*/
 }
