@@ -21,6 +21,15 @@
 Label::Label(sf::RenderWindow* window, sf::String string, sf::Vector2f relative_position,
 			 UIControl::Relativity relative_to, unsigned int font_size, sf::Color color,
 			 sf::Font* font) {
+	init(window, string, relative_position, relative_to, font_size, color, font);
+}
+
+Label::Label() {
+	//Do nothing
+}
+
+void Label::init(sf::RenderWindow* window, sf::String string, sf::Vector2f relative_position,
+				 UIControl::Relativity relative_to, unsigned int font_size, sf::Color color, sf::Font* font) {
 	this->window = window; //Assign fields
 	this->relative_position = relative_position;
 	this->relative_to = relative_to;
@@ -32,10 +41,15 @@ Label::Label(sf::RenderWindow* window, sf::String string, sf::Vector2f relative_
 	text.setFont(*font);
 
 	//Set position after size
-	auto text_bounds = text.getLocalBounds(); //TODO: memory leak here
+	auto text_bounds = text.getLocalBounds();
 	this->size = { text_bounds.width, text_bounds.height };
 	text.setPosition(pos_x(), pos_y());
 	//pos_x() and pos_y() works properly only when size correctly assigned. See UIControl class
+}
+
+
+void Label::set_color(sf::Color color) {
+	text.setFillColor(color);
 }
 
 void Label::render() {

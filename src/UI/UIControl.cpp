@@ -23,26 +23,26 @@ float UIControl::pos_x() const {
 		case Relativity::LeftTop: //Left
 		case Relativity::LeftCenter:
 		case Relativity::LeftBottom: {
-			return relative_position.x;
+			return relative_position.x + parent_pos().x;
 			break;
 		}
 
 		case Relativity::CenterTop: //Center
 		case Relativity::CenterCenter:
 		case Relativity::CenterBottom: {
-			return relative_position.x + (window->getSize().x - size.x) / 2;
+			return relative_position.x + (parent_size().x - size.x) / 2 + parent_pos().x;
 			break;
 		}
 
 		case Relativity::RightTop: //Right
 		case Relativity::RightCenter:
 		case Relativity::RightBottom: {
-			return relative_position.x + window->getSize().x;
+			return relative_position.x + parent_size().x + parent_pos().x;
 			break;
 		}
 
 		default: { //What?
-			return relative_position.x;
+			return relative_position.x + parent_pos().y;
 			break;
 		}
 	}
@@ -53,26 +53,26 @@ float UIControl::pos_y() const {
 		case Relativity::LeftTop: //Top
 		case Relativity::CenterTop:
 		case Relativity::RightTop: {
-			return relative_position.y;
+			return relative_position.y + parent_pos().y;
 			break;
 		}
 
 		case Relativity::LeftCenter: //Center
 		case Relativity::CenterCenter:
 		case Relativity::RightCenter: {
-			return relative_position.y + (window->getSize().y - size.y) / 2;
+			return relative_position.y + (parent_size().y - size.y) / 2 + parent_pos().y;
 			break;
 		}
 
 		case Relativity::LeftBottom: //Bottom
 		case Relativity::CenterBottom:
 		case Relativity::RightBottom: {
-			return relative_position.y + window->getSize().y;
+			return relative_position.y + parent_size().y + parent_pos().y;
 			break;
 		}
 
 		default: { //What?
-			return relative_position.y;
+			return relative_position.y + parent_pos().y;
 			break;
 		}
 	}
@@ -80,4 +80,20 @@ float UIControl::pos_y() const {
 
 sf::Vector2f UIControl::position() const {
 	return { pos_x(), pos_y() };
+}
+
+sf::Vector2f UIControl::parent_size() const {
+	if (parent == nullptr) {
+		auto size_i = window->getSize(); //Window size and convert it to float
+		return { static_cast<float>(size_i.x), static_cast<float>(size_i.y) };
+	}
+	else
+		return parent->size;
+}
+
+sf::Vector2f UIControl::parent_pos() const {
+	if (parent == nullptr)
+		return { 0, 0 };
+	else
+		return parent->position();
 }

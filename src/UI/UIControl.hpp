@@ -32,12 +32,16 @@ public:
 	float pos_x() const;
 	float pos_y() const;
 	sf::Vector2f position() const;
+	sf::Vector2f parent_size() const;
+	sf::Vector2f parent_pos() const;
+
+	UIControl* parent = nullptr;
 
 	virtual void render() = 0;
 
 protected:
 	Relativity relative_to;
-	sf::Vector2f relative_position;
+	sf::Vector2f relative_position = { 0, 0 };
 	sf::Vector2f size = { 0, 0 };
-	sf::RenderWindow* window;
+	sf::RenderWindow* window = nullptr;
 };

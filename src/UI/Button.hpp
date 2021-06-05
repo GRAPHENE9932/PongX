@@ -19,6 +19,7 @@
 #pragma once
 
 #include "../GameManager.hpp"
+#include "Label.hpp"
 #include "UIControl.hpp"
 
 class Button : public UIControl {
@@ -33,7 +34,7 @@ public:
 
 private:
 	sf::RectangleShape main_rect;
-	sf::Text text;
+	Label label;
 
 	sf::Color color, bg_color;
 
