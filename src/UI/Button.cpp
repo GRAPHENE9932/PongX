@@ -41,7 +41,7 @@ Button::Button(sf::RenderWindow* window, sf::Vector2f relative_position, UIContr
 	text.setCharacterSize(font_size);
 	text.setFillColor(color);
 	//Calculate position manually for central alignment
-	auto text_bounds = text.getGlobalBounds();
+	auto text_bounds = text.getLocalBounds();
 	sf::Vector2f text_position = {
 		pos_x() + (size.x - text_bounds.width) / 2,
 		pos_y() + (size.y - text_bounds.height) / 2

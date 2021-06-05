@@ -33,7 +33,6 @@ public:
 private:
 	///UI controls list for this page
 	std::vector<UIControl*> ui_list;
-	sf::Font font;
 
 	void local_multiplayer_clicked();
 };

@@ -23,16 +23,13 @@
 
 MainMenuPage::MainMenuPage(sf::RenderWindow* window) {
 	this->window = window;
-	//Initialize font
-	font.loadFromFile("default.ttf");
 
 	//BEGIN UI
 	//Initialize the logo label
-	Label* logo_label = new Label(window, "PongX", { 0, 0 }, UIControl::CenterTop, 120, sf::Color::White, &font);
+	Label* logo_label = new Label(window, "PongX", { 0, 0 }, UIControl::CenterTop, 120);
 	//Initialize the local multiplayer button
 	Button* local_multiplayer_button = new Button(window, { 0, 0 }, UIControl::CenterCenter, { 500, 100 },
-												  "Local multiplayer", 48, sf::Color::White, sf::Color::Black,
-												   &font);
+												  "Local multiplayer", 48);
 
 	local_multiplayer_button->set_callback([this] { local_multiplayer_clicked(); });
 
@@ -55,8 +52,6 @@ void MainMenuPage::render() {
 void MainMenuPage::local_multiplayer_clicked() {
 	//Create new StartGamePage
 	StartGamePage* new_page = new StartGamePage(window, StartGamePage::LocalMultiplayer);
-	//Give this callback to the new page
-	new_page->set_switch_page_callback(switch_page_callback);
 	//Execute callback
-	switch_page_callback(new_page);
+	GameManager::switch_page(new_page);
 }

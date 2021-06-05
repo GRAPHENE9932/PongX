@@ -18,12 +18,14 @@
 
 #pragma once
 
+#include "../GameManager.hpp"
 #include "UIControl.hpp"
 
 class FPSMeter : public UIControl {
 public:
 	FPSMeter(sf::RenderWindow* window, sf::Vector2f relative_position, UIControl::Relativity relative_to,
-			 unsigned int font_size, sf::Color color);
+			 unsigned int font_size, sf::Color color = sf::Color::White,
+			 sf::Font* font = GameManager::get_default_font());
 
 	void render() override;
 
@@ -31,5 +33,4 @@ private:
 	sf::Text text;
 
 	sf::Clock clock;
-	sf::Font font;
 };

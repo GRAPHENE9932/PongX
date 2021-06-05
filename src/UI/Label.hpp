@@ -1,5 +1,5 @@
 /*
- * PongX page class
+ * PongX UI label
  * Copyright (C) 2021  Artem Kliminskyi <artemklim50@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,18 +18,17 @@
 
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include "../GameManager.hpp"
+#include "UIControl.hpp"
 
-#include <functional>
-
-class Page {
+class Label : public UIControl {
 public:
-	bool enabled;
+	Label(sf::RenderWindow* window, sf::String string, sf::Vector2f relative_position,
+		  UIControl::Relativity relative_to, unsigned int font_size, sf::Color color = sf::Color::White,
+		  sf::Font* font = GameManager::get_default_font());
 
-	virtual ~Page() { }; //Empty destructor
+	void render() override;
 
-	virtual void render() = 0;
-
-protected:
-	sf::RenderWindow* window;
+private:
+	sf::Text text;
 };

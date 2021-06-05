@@ -18,13 +18,14 @@
 
 #pragma once
 
+#include "../GameManager.hpp"
 #include "UIControl.hpp"
 
 class Button : public UIControl {
 public:
 	Button(sf::RenderWindow* window, sf::Vector2f relative_position, UIControl::Relativity relative_to,
-		   sf::Vector2f size, sf::String title, unsigned int font_size, sf::Color color,
-		   sf::Color bg_color, sf::Font* font);
+		   sf::Vector2f size, sf::String title, unsigned int font_size, sf::Color color = sf::Color::White,
+		   sf::Color bg_color = sf::Color::Black, sf::Font* font = GameManager::get_default_font());
 
 	void set_callback(std::function<void()> on_click);
 

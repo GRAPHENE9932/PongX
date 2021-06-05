@@ -1,5 +1,5 @@
 /*
- * PongX page class
+ * PongX main game manager
  * Copyright (C) 2021  Artem Kliminskyi <artemklim50@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,18 +18,20 @@
 
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include <vector>
 
-#include <functional>
+#include "Pages/Page.hpp"
+#include "UI/UIControl.hpp"
 
-class Page {
+///Static class. Analog of main, but members of this class are accessible from any place
+class GameManager {
 public:
-	bool enabled;
+	///Start game. WARNING: DO NOT CALL MORE THAN 1 TIME
+	static int start();
 
-	virtual ~Page() { }; //Empty destructor
+	///Switch current page to specified one and delete previous
+	static void switch_page(Page* new_page);
 
-	virtual void render() = 0;
-
-protected:
-	sf::RenderWindow* window;
+	///Get default font ("default.ttf"). This function loads the font only once, then just return cached
+	static sf::Font* get_default_font();
 };

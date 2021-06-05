@@ -23,18 +23,14 @@
 StartGamePage::StartGamePage(sf::RenderWindow* window, GameType game_type) {
 	this->window = window;
 	this->game_type = game_type;
-	//Initialize font
-	font.loadFromFile("default.ttf");
 
 	//BEGIN UI
 	//Initialize start game button
-	Button* start_button = new Button(window, { -425, -125 }, UIControl::RightBottom, { 400, 100 }, "Start",
-									  48, sf::Color::White, sf::Color::Black, &font);
+	Button* start_button = new Button(window, { -425, -125 }, UIControl::RightBottom, { 400, 100 }, "Start", 48);
 	start_button->set_callback([this] { start_click(); });
 
 	//Initialize back button
-	Button* back_button = new Button(window, { 25, -125 }, UIControl::LeftBottom, { 400, 100 }, "Back",
-									 48, sf::Color::White, sf::Color::Black, &font);
+	Button* back_button = new Button(window, { 25, -125 }, UIControl::LeftBottom, { 400, 100 }, "Back", 48);
 	back_button->set_callback([this] { back_click(); });
 
 	ui_list.push_back(start_button);
@@ -59,8 +55,6 @@ void StartGamePage::start_click() {
 void StartGamePage::back_click() {
 	//Create new "Main menu page"
 	Page* new_page = new MainMenuPage(window);
-	//Give this callback to the new page
-	new_page->set_switch_page_callback(switch_page_callback);
 	//Switch page to it
-	switch_page_callback(new_page);
+	GameManager::switch_page(new_page);
 }

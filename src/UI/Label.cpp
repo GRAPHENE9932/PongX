@@ -1,5 +1,5 @@
 /*
- * PongX FPS meter
+ * PongX UI label
  * Copyright (C) 2021  Artem Kliminskyi <artemklim50@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -11,33 +11,34 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include "FPSMeter.hpp"
 
-FPSMeter::FPSMeter(sf::RenderWindow* window, sf::Vector2f relative_position, UIControl::Relativity relative_to,
-				   unsigned int font_size, sf::Color color, sf::Font* font) {
-	this->window = window;
+#include "Label.hpp"
+
+Label::Label(sf::RenderWindow* window, sf::String string, sf::Vector2f relative_position,
+			 UIControl::Relativity relative_to, unsigned int font_size, sf::Color color,
+			 sf::Font* font) {
+	this->window = window; //Assign fields
 	this->relative_position = relative_position;
 	this->relative_to = relative_to;
 
-	//Set basic parameters of text
+	//Initialize text
+	text.setString(string);
 	text.setCharacterSize(font_size);
 	text.setFillColor(color);
-	text.setPosition(position());
 	text.setFont(*font);
+
+	//Set position after size
+	auto text_bounds = text.getLocalBounds(); //TODO: memory leak here
+	this->size = { text_bounds.width, text_bounds.height };
+	text.setPosition(pos_x(), pos_y());
+	//pos_x() and pos_y() works properly only when size correctly assigned. See UIControl class
 }
 
-void FPSMeter::render() {
-	//Get elapsed time
-	sf::Time elapsed = clock.getElapsedTime();
-	clock.restart();
-	//Calculate FPS
-	unsigned short fps = 1.0F / elapsed.asSeconds();
-
-	//Display
-	text.setString(std::to_string(fps) + " FPS");
+void Label::render() {
+	//Render text
 	window->draw(text);
 }
