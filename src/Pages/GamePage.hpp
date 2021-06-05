@@ -1,5 +1,5 @@
 /*
- * PongX page class
+ * PongX main game page
  * Copyright (C) 2021  Artem Kliminskyi <artemklim50@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,21 +18,16 @@
 
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include "../GameManager.hpp"
+#include "Page.hpp"
 
-#include <functional>
-
-class Page {
+class GamePage : public Page {
 public:
-	bool enabled;
+	GamePage(sf::RenderWindow* window, GameType game_type);
 
-	virtual ~Page() {
-		allow_render = false;
-	};
+	void render() override;
 
-	virtual void render() = 0;
-
-protected:
-	sf::RenderWindow* window;
-	bool allow_render = true;
+private:
+	sf::FloatRect player_rect;
+	sf::RectangleShape player_shape;
 };

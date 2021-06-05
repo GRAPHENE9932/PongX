@@ -41,7 +41,7 @@ void Label::init(sf::RenderWindow* window, sf::String string, sf::Vector2f relat
 	text.setFont(*font);
 
 	//Set position after size
-	auto text_bounds = text.getLocalBounds();
+	sf::Rect text_bounds = text.getLocalBounds();
 	this->size = { text_bounds.width, text_bounds.height };
 	text.setPosition(pos_x(), pos_y());
 	//pos_x() and pos_y() works properly only when size correctly assigned. See UIControl class

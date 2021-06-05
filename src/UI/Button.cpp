@@ -38,18 +38,6 @@ Button::Button(sf::RenderWindow* window, sf::Vector2f relative_position, UIContr
 	//Setup the label
 	label.parent = this; //And set it in the center of the button
 	label.init(window, title, { 0, 0 }, UIControl::CenterCenter, font_size, color, font);
-	/*text.setString(title);
-	text.setFont(*font);
-	text.setCharacterSize(font_size);
-	text.setFillColor(color);
-	text.setPosition( {0, 0});
-	//Calculate position manually for central alignment
-	auto text_bounds = text.getLocalBounds();
-	sf::Vector2f text_position = {
-		pos_x() + (size.x - text_bounds.width) / 2,
-		pos_y() + (size.y - text_bounds.height) / 2
-	};
-	text.setPosition(text_position);*/
 }
 
 void Button::set_callback(std::function<void()> on_click) {

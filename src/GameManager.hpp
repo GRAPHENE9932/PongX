@@ -23,6 +23,10 @@
 #include "Pages/Page.hpp"
 #include "UI/UIControl.hpp"
 
+enum GameType : unsigned char {
+	LocalMultiplayer, Singleplayer, LocalNetworkMultiplayer
+};
+
 ///Static class. Analog of main, but members of this class are accessible from any place
 class GameManager {
 public:

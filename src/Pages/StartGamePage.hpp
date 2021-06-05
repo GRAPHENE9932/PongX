@@ -18,17 +18,14 @@
 
 #pragma once
 
+#include "GamePage.hpp"
 #include "../UI/UIControl.hpp"
 #include "Page.hpp"
 
 class StartGamePage : public Page {
 public:
-	enum GameType : unsigned char {
-		LocalMultiplayer, Singleplayer, LocalNetworkMultiplayer
-	};
 
 	StartGamePage(sf::RenderWindow* window, GameType game_type);
-	~StartGamePage() override;
 
 	void render() override;
 

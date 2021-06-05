@@ -38,18 +38,16 @@ StartGamePage::StartGamePage(sf::RenderWindow* window, GameType game_type) {
 	//END UI
 }
 
-StartGamePage::~StartGamePage() {
-
-}
-
 void StartGamePage::render() {
 	//Render UI
-	for (unsigned int i = 0; i < ui_list.size(); i++)
+	for (unsigned int i = 0; i < ui_list.size() && allow_render; i++)
 		ui_list[i]->render();
 }
 
 void StartGamePage::start_click() {
-
+	//Create new game page
+	Page* new_page = new GamePage(window, game_type);
+	GameManager::switch_page(new_page);
 }
 
 void StartGamePage::back_click() {
