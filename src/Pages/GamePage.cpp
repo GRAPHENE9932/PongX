@@ -16,15 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "../Enemies/LocalEnemy.hpp"
 #include "GamePage.hpp"
 
 //BEGIN global functions
-template<typename T>
-inline void set_position_of(sf::Rect<T>* rect, sf::Vector2<T> pos) {
-	rect->left = pos.x;
-	rect->top = pos.y;
-}
-
 template<typename T>
 inline void move_rect(sf::Rect<T>* rect, sf::Vector2<T> rel_pos) {
 	rect->left += rel_pos.x;
@@ -35,12 +30,30 @@ inline void move_rect(sf::Rect<T>* rect, sf::Vector2<T> rel_pos) {
 GamePage::GamePage(sf::RenderWindow* window, GameType game_type) {
 	this->window = window;
 
-	//Create player rect
+	//Initialize enemy
+	switch (game_type) {
+		case LocalMultiplayer: {
+			enemy = new LocalEnemy(sf::FloatRect({ 10, 0 }, { 45, 225 }),
+								   0, window->getSize().y);
+			break;
+		}
+		default: {
+			break; //TODO: Singleplayer, LocalNetworkMultiplayer
+		}
+	}
+
+	//Create player and enemy rect
 	player_rect = sf::FloatRect( { 10, 0 }, { 45, 225 } );
+	enemy_rect = sf::FloatRect( { 1225, 0 }, { 45, 225 } );
 
 	//Initialize player shape
-	player_shape.setSize({player_rect.width, player_rect.height });
+	player_shape.setSize({ player_rect.width, player_rect.height });
 	player_shape.setPosition({ player_rect.left, player_rect.top });
+	player_shape.setFillColor(sf::Color::White);
+	//Initialize enemy shape
+	enemy_shape.setSize({ enemy_rect.width, enemy_rect.height });
+	enemy_shape.setPosition({ enemy_rect.left, enemy_rect.top });
+	enemy_shape.setFillColor(sf::Color::White);
 }
 
 void GamePage::render() {
@@ -52,6 +65,12 @@ void GamePage::render() {
 
 	player_shape.setPosition( { player_rect.left, player_rect.top } ); //Set position
 
+	//Update enemy
+	enemy_rect.top = enemy->update();
+
+	enemy_shape.setPosition({ enemy_rect.left, enemy_rect.top }); //Set position
+
 	//Render
 	window->draw(player_shape);
+	window->draw(enemy_shape);
 }

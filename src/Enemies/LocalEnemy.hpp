@@ -1,5 +1,5 @@
 /*
- * PongX main game page
+ * PongX local enemy
  * Copyright (C) 2021  Artem Kliminskyi <artemklim50@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,18 +18,11 @@
 
 #pragma once
 
-#include "../GameManager.hpp"
-#include "../Enemies/Enemy.hpp"
-#include "Page.hpp"
+#include "Enemy.hpp"
 
-class GamePage : public Page {
+class LocalEnemy : public Enemy {
 public:
-	GamePage(sf::RenderWindow* window, GameType game_type);
+	LocalEnemy(sf::FloatRect cur_rect, float top_bound, float bottom_bound);
 
-	void render() override;
-
-private:
-	Enemy* enemy;
-	sf::FloatRect player_rect, enemy_rect;
-	sf::RectangleShape player_shape, enemy_shape;
+	float update() override;
 };
