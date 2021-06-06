@@ -38,10 +38,14 @@ private:
 	sf::RectangleShape main_rect;
 	Label label;
 
-	sf::Color color, bg_color;
+	///Means the color of the rect and text
+	sf::Color color;
+	///Means the color of background of the button
+	sf::Color bg_color;
 
 	///Is mouse was pressed on the last frame?
 	bool pressed_before = false;
 
+	///Check is mouse pointer in the area of the button
 	inline bool is_mouse_in_area() const;
 };

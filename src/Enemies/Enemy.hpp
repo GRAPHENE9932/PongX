@@ -22,9 +22,13 @@
 
 class Enemy {
 public:
+	///Update the enemy to let him move
+	///@return new position of the enemy
 	virtual float update() = 0;
 
 protected:
+	///Enemy (this) rect
 	sf::FloatRect player_rect;
+	///Acceptable bound where player_rect can exist
 	float bottom_bound, top_bound;
 };

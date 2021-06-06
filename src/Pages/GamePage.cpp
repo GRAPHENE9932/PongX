@@ -38,7 +38,7 @@ GamePage::GamePage(sf::RenderWindow* window, GameType game_type) {
 			break;
 		}
 		default: {
-			break; //TODO: Singleplayer, LocalNetworkMultiplayer
+			break; //TODO 05.06.2021: Singleplayer, LocalNetworkMultiplayer
 		}
 	}
 

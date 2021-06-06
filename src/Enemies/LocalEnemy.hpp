@@ -20,8 +20,10 @@
 
 #include "Enemy.hpp"
 
+///Local - means other player on the host's keyboard
 class LocalEnemy : public Enemy {
 public:
+	///Initialize a new local enemy
 	LocalEnemy(sf::FloatRect cur_rect, float top_bound, float bottom_bound);
 
 	float update() override;

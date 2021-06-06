@@ -30,7 +30,8 @@ public:
 	void render() override;
 
 private:
+	///Text for render
 	sf::Text text;
-
+	///Clock to calculate the frametime
 	sf::Clock clock;
 };

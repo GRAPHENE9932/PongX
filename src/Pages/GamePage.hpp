@@ -22,6 +22,7 @@
 #include "../Enemies/Enemy.hpp"
 #include "Page.hpp"
 
+///Page where the main game playing. Contains field, player and enemy
 class GamePage : public Page {
 public:
 	GamePage(sf::RenderWindow* window, GameType game_type);
@@ -31,5 +32,6 @@ public:
 private:
 	Enemy* enemy;
 	sf::FloatRect player_rect, enemy_rect;
+	///Shape only for render. Syncronized with the player_rect ot enemy_rect
 	sf::RectangleShape player_shape, enemy_shape;
 };

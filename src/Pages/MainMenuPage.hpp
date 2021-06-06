@@ -34,7 +34,9 @@ private:
 	///UI controls list for this page
 	std::vector<UIControl*> ui_list;
 
+	///Pointer to the "clicked" filed of the "local multiplayer" button
 	bool* local_multiplayer_clicked;
 
+	///When "Local multiplayer" button clicked
 	void local_multiplayer_click();
 };

@@ -35,8 +35,13 @@ private:
 
 	GameType game_type;
 
-	bool* back_clicked, *start_clicked;
+	///Pointer to the "clicked" filed of the "Start" button
+	bool* start_clicked;
+	///Pointer to the "clicked" filed of the "Back" button
+	bool* back_clicked;
 
+	///When "Start" button clicked
 	void start_click();
+	///When "Back" button clicked
 	void back_click();
 };

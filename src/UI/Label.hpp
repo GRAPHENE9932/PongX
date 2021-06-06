@@ -32,6 +32,7 @@ public:
 			  UIControl::Relativity relative_to, unsigned int font_size, sf::Color color = sf::Color::White,
 			  sf::Font* font = GameManager::get_default_font());
 
+	///Set fill color of the text
 	void set_color(sf::Color color);
 
 	void render() override;
