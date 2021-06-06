@@ -29,6 +29,8 @@ public:
 		RightTop, RightCenter, RightBottom
 	};
 
+	virtual ~UIControl() { };
+
 	float pos_x() const;
 	float pos_y() const;
 	sf::Vector2f position() const;

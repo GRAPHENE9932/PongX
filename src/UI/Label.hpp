@@ -26,7 +26,6 @@ public:
 	Label(sf::RenderWindow* window, sf::String string, sf::Vector2f relative_position,
 		  UIControl::Relativity relative_to, unsigned int font_size, sf::Color color = sf::Color::White,
 		  sf::Font* font = GameManager::get_default_font());
-
 	Label();
 
 	void init(sf::RenderWindow* window, sf::String string, sf::Vector2f relative_position,

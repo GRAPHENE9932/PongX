@@ -32,13 +32,13 @@ public:
 
 	void render() override;
 
+	bool clicked = false;
+
 private:
 	sf::RectangleShape main_rect;
 	Label label;
 
 	sf::Color color, bg_color;
-
-	std::function<void()> on_click;
 
 	///Is mouse was pressed on the last frame?
 	bool pressed_before = false;

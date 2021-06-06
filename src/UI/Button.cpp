@@ -40,11 +40,10 @@ Button::Button(sf::RenderWindow* window, sf::Vector2f relative_position, UIContr
 	label.init(window, title, { 0, 0 }, UIControl::CenterCenter, font_size, color, font);
 }
 
-void Button::set_callback(std::function<void()> on_click) {
-	this->on_click = on_click;
-}
-
 void Button::render() {
+	//Set that not clicked
+	clicked = false;
+
 	//Check if mouse pressed
 	bool pressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
 
@@ -62,9 +61,9 @@ void Button::render() {
 	window->draw(main_rect);
 	label.render();
 
-	//Accept click after all. Because on_click() can be destructive for this button
+	//Accept click
 	if (pressed && is_mouse_in_area() && !pressed_before)
-		on_click();
+		clicked = true;
 
 	//Handle pressed_before
 	if (pressed)

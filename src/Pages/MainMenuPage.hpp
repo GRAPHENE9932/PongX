@@ -34,5 +34,7 @@ private:
 	///UI controls list for this page
 	std::vector<UIControl*> ui_list;
 
-	void local_multiplayer_clicked();
+	bool* local_multiplayer_clicked;
+
+	void local_multiplayer_click();
 };

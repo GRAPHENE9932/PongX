@@ -24,8 +24,8 @@
 
 class StartGamePage : public Page {
 public:
-
 	StartGamePage(sf::RenderWindow* window, GameType game_type);
+	~StartGamePage() override;
 
 	void render() override;
 
@@ -34,6 +34,8 @@ private:
 	std::vector<UIControl*> ui_list;
 
 	GameType game_type;
+
+	bool* back_clicked, *start_clicked;
 
 	void start_click();
 	void back_click();

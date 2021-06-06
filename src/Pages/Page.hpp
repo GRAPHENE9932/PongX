@@ -26,13 +26,10 @@ class Page {
 public:
 	bool enabled;
 
-	virtual ~Page() {
-		allow_render = false;
-	};
+	virtual ~Page() { };
 
 	virtual void render() = 0;
 
 protected:
 	sf::RenderWindow* window;
-	bool allow_render = true;
 };

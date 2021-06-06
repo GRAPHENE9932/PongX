@@ -30,8 +30,7 @@ MainMenuPage::MainMenuPage(sf::RenderWindow* window) {
 	//Initialize the local multiplayer button
 	Button* local_multiplayer_button = new Button(window, { 0, 0 }, UIControl::CenterCenter, { 500, 100 },
 												  "Local multiplayer", 48);
-
-	local_multiplayer_button->set_callback([this] { local_multiplayer_clicked(); });
+	local_multiplayer_clicked = &local_multiplayer_button->clicked;
 
 	//Add controls to the list
 	ui_list.push_back(logo_label);
@@ -40,18 +39,23 @@ MainMenuPage::MainMenuPage(sf::RenderWindow* window) {
 }
 
 MainMenuPage::~MainMenuPage() {
-
+	for (unsigned int i = 0; i < ui_list.size(); i++)
+		delete ui_list[i];
 }
 
 void MainMenuPage::render() {
 	//Render UI
 	for (unsigned int i = 0; i < ui_list.size(); i++)
 		ui_list[i]->render();
+
+	//Handle events
+	if (*local_multiplayer_clicked)
+		local_multiplayer_click();
 }
 
-void MainMenuPage::local_multiplayer_clicked() {
-	//Create new StartGamePage
+void MainMenuPage::local_multiplayer_click() {
+	//Create a new StartGamePage
 	StartGamePage* new_page = new StartGamePage(window, LocalMultiplayer);
-	//Execute callback
+	//Switch to this page
 	GameManager::switch_page(new_page);
 }

@@ -27,32 +27,44 @@ StartGamePage::StartGamePage(sf::RenderWindow* window, GameType game_type) {
 	//BEGIN UI
 	//Initialize start game button
 	Button* start_button = new Button(window, { -425, -125 }, UIControl::RightBottom, { 400, 100 }, "Start", 48);
-	start_button->set_callback([this] { start_click(); });
+	start_clicked = &start_button->clicked;
 
 	//Initialize back button
 	Button* back_button = new Button(window, { 25, -125 }, UIControl::LeftBottom, { 400, 100 }, "Back", 48);
-	back_button->set_callback([this] { back_click(); });
+	back_clicked = &back_button->clicked;
 
 	ui_list.push_back(start_button);
 	ui_list.push_back(back_button);
 	//END UI
 }
 
+StartGamePage::~StartGamePage() {
+	for (unsigned int i = 0; i < ui_list.size(); i++)
+		delete ui_list[i];
+}
+
 void StartGamePage::render() {
 	//Render UI
-	for (unsigned int i = 0; i < ui_list.size() && allow_render; i++)
+	for (unsigned int i = 0; i < ui_list.size(); i++)
 		ui_list[i]->render();
+
+	//Handle events
+	if (*start_clicked)
+		start_click();
+	if (*back_clicked)
+		back_click();
 }
 
 void StartGamePage::start_click() {
-	//Create new game page
+	//Create a new game page
 	Page* new_page = new GamePage(window, game_type);
+	//Switch to this page
 	GameManager::switch_page(new_page);
 }
 
 void StartGamePage::back_click() {
-	//Create new "Main menu page"
+	//Create a new "Main menu page"
 	Page* new_page = new MainMenuPage(window);
-	//Switch page to it
+	//Switch to this page
 	GameManager::switch_page(new_page);
 }
