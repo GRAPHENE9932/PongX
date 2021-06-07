@@ -38,4 +38,12 @@ public:
 
 	///Get default font ("default.ttf"). This function loads the font only once, then just return cached
 	static sf::Font* get_default_font();
+
+private:
+	///Global UI controls list
+	static std::vector<UIControl*> ui_list;
+	///Current page
+	static Page* page;
+	///Cached default font
+	static sf::Font default_font;
 };

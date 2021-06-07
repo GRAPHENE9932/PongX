@@ -21,11 +21,11 @@
 #include "GameManager.hpp"
 
 ///Global UI controls list
-static std::vector<UIControl*> ui_list;
+std::vector<UIControl*> GameManager::ui_list;
 ///Current page
-static Page* page;
+Page* GameManager::page;
 ///Cached default font
-static sf::Font default_font;
+sf::Font GameManager::default_font;
 
 int GameManager::start() {
 	//Create a window

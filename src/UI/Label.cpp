@@ -40,8 +40,21 @@ void Label::init(sf::RenderWindow* window, sf::String string, sf::Vector2f relat
 	text.setFillColor(color);
 	text.setFont(*font);
 
-	//Set position after size
-	auto text_bounds = text.getLocalBounds();
+	//          +--------------------------+ <- Y position that we have assigned
+	// Offset-> |                          |
+	//          +--------------------------+ <- The real Y position we can get using getGlobalBounds()
+	//          | ----- ----- \   /  ----- |
+	//          |   |   |      \ /     |   |
+	//          |   |   |----   |      |   |
+	//          +---|---|------/-\-----|---+
+	//          |   |   ----- /   \    |   |
+	//          +--------------------------+
+
+	//Get bounds and calculate the offset
+	auto text_bounds = text.getGlobalBounds();
+	//Reassign the relative position
+	this->relative_position.y -= text_bounds.top;
+
 	this->size = { text_bounds.width, text_bounds.height };
 	text.setPosition(pos_x(), pos_y());
 	//pos_x() and pos_y() works properly only when size correctly assigned. See UIControl class
