@@ -34,4 +34,22 @@ private:
 	sf::FloatRect player_rect, enemy_rect;
 	///Shape only for render. Syncronized with the player_rect ot enemy_rect
 	sf::RectangleShape player_shape, enemy_shape;
+
+	///Position of the ball
+	sf::Vector2f ball_pos;
+	///Direction of movement of the ball in degrees
+	float direction;
+	///Shape only for render. Syncronized with ball_pos and radius
+	sf::CircleShape ball_shape;
+	///Radius of the ball
+	float radius;
+	///Speed of the ball
+	float speed;
+
+	///Check if the ball was collided with the horizontal bounds (window).
+	///If collided - change the direction of the ball
+	inline void check_horizontal_collision();
+	///Check if the ball was collided with the vertical bounds (player and enemy).
+	///If collided - change the direction of the ball
+	inline void check_vertical_collision();
 };

@@ -19,6 +19,7 @@
 #pragma once
 
 #include <vector>
+#include <random>
 
 #include "Pages/Page.hpp"
 #include "UI/UIControl.hpp"
@@ -30,7 +31,7 @@ enum GameType : unsigned char {
 ///Static class. Analog of main, but members of this class are accessible from any place
 class GameManager {
 public:
-	///Start game. WARNING: DO NOT CALL MORE THAN 1 TIME
+	///Start the game. WARNING: DO NOT CALL MORE THAN 1 TIME
 	static int start();
 
 	///Switch current page to specified one and delete previous
@@ -39,11 +40,20 @@ public:
 	///Get default font ("default.ttf"). This function loads the font only once, then just return cached
 	static sf::Font* get_default_font();
 
+	///Generates a random number in range [min;max)
+	static float random_number(float min, float max);
+
 private:
 	///Global UI controls list
 	static std::vector<UIControl*> ui_list;
 	///Current page
 	static Page* page;
+
 	///Cached default font
 	static sf::Font default_font;
+
+	///Thing that takes seed and produces random numbers
+	static std::mt19937 randomizer;
+	///Is randomizer already initialized?
+	static bool randomizer_initialized;
 };
