@@ -46,10 +46,10 @@ private:
 	///Speed of the ball
 	float speed;
 
-	///Check if the ball was collided with the horizontal bounds (window).
+	///Check if the ball was collided with the player or enemy
 	///If collided - change the direction of the ball
-	inline void check_horizontal_collision();
-	///Check if the ball was collided with the vertical bounds (player and enemy).
+	inline void check_player_enemy_collision();
+	///Check if the ball was collided with the window bounds
 	///If collided - change the direction of the ball
-	inline void check_vertical_collision();
+	inline void check_bounds_collision();
 };
