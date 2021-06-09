@@ -25,7 +25,7 @@
 #include "UI/UIControl.hpp"
 
 enum GameType : unsigned char {
-	LocalMultiplayer, Singleplayer, LocalNetworkMultiplayer
+	LocalMultiplayer, Singleplayer, LocalNetworkHost, LocalNetworkClient
 };
 
 ///Static class. Analog of main, but members of this class are accessible from any place

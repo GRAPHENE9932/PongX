@@ -21,19 +21,17 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Window/Keyboard.hpp>
 
-struct ServerSettings {
-	enum ServerType : unsigned char {
-		LocalMultiplayer, Singleplayer, LocalNetworkHost, LocalNetworkClient
-	};
+#include "../GameManager.hpp"
 
+struct ServerSettings {
 	///Necessary setting
-	ServerType server_type;
+	GameType server_type;
 	///Necessary setting
-	float ball_radius;
+	float ball_radius, ball_speed;
 	///Necessary setting
 	sf::FloatRect player_rect, enemy_rect;
 	///Necessary setting
-	sf::Vector2f window_size;
+	sf::Vector2u window_size;
 
 	///Only for local multiplayer
 	sf::Keyboard::Key enemy_up_key = sf::Keyboard::Up, enemy_down_key = sf::Keyboard::Down;

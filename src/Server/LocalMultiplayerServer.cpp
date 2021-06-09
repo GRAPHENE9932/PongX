@@ -1,5 +1,5 @@
 /*
- * PongX main game page
+ * PongX local multiplayer server
  * Copyright (C) 2021  Artem Kliminskyi <artemklim50@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,24 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#pragma once
+#include "LocalMultiplayerServer.hpp"
 
-#include "../Server/Server.hpp"
-#include "../GameManager.hpp"
-#include "Page.hpp"
+LocalMultiplayerServer::LocalMultiplayerServer(sf::Vector2u window_size) : Server(window_size) {
 
-///Page where the main game playing. Contains field, player and enemy
-class GamePage : public Page {
-public:
-	GamePage(sf::RenderWindow* window, GameType game_type);
+}
 
-	void render() override;
+void LocalMultiplayerServer::update() {
+	//Move the enemy if the specified keys are pressed
+	if (sf::Keyboard::isKeyPressed(enemy_up_key))
+		move_enemy_up();
+	if (sf::Keyboard::isKeyPressed(enemy_down_key))
+		move_enemy_down();
 
-private:
-	Server* server;
-	///Shape only for render. Syncronized with the player_rect ot enemy_rect
-	sf::RectangleShape player_shape, enemy_shape;
-
-	///Shape only for render. Syncronized with ball_pos and radius
-	sf::CircleShape ball_shape;
-};
+	//Move the ball
+	update_ball_movement();
+}

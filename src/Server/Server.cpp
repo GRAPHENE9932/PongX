@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "../GameManager.hpp"
+#include "LocalMultiplayerServer.hpp"
 #include "Server.hpp"
 
 ///PI constant
@@ -24,8 +24,35 @@ constexpr float PI = 3.14159265359F;
 ///If multiply this constant by an angle in degrees, result is in radians
 constexpr float DEG2RAD = PI / 180.0F;
 
-Server* Server::create(ServerSettings setting) {
-	return nullptr; //TODO
+Server::Server(sf::Vector2u window_size) {
+	//Initialize some parameters
+	this->window_size = window_size;
+	ball_pos = { window_size.x * 0.5F, window_size.y * 0.5F }; //Place the ball to the center of the window
+	ball_direction = random_number_double_range(10.0F * DEG2RAD, 170.0F * DEG2RAD, //Random direction
+												190.0F * DEG2RAD, 350.0F * DEG2RAD);
+}
+
+Server* Server::create(ServerSettings settings) {
+	switch (settings.server_type) {
+		case LocalMultiplayer: {
+			LocalMultiplayerServer* cur_server =
+				new LocalMultiplayerServer(settings.window_size); //Construct a new server
+
+			///Set settings
+			cur_server->server_type = LocalMultiplayer;
+			cur_server->ball_radius = settings.ball_radius;
+			cur_server->ball_speed = settings.ball_speed;
+			cur_server->player_rect = settings.player_rect;
+			cur_server->enemy_rect = settings.enemy_rect;
+			cur_server->enemy_up_key = settings.enemy_up_key;
+			cur_server->enemy_down_key = settings.enemy_down_key;
+
+			return cur_server;
+		}
+		default: {
+			return nullptr; //TODO other types
+		}
+	}
 }
 
 sf::Vector2f Server::get_ball_pos() {
@@ -33,7 +60,7 @@ sf::Vector2f Server::get_ball_pos() {
 }
 
 sf::FloatRect Server::get_player_rect() {
-	return enemy_rect;
+	return player_rect;
 }
 
 sf::FloatRect Server::get_enemy_rect() {
@@ -124,6 +151,37 @@ inline bool Server::intersects_with_horizontal_line(float line_1_x, float line_2
 }
 //END maths
 
+//BEGIN player and enemy movement
+void Server::move_player_up() {
+	move_rect(&player_rect, { 0, -10 });
+
+	if (player_rect.top < 0.0F) //If the player already behind the limit, correct it's position
+		player_rect.top = 0.0F;
+}
+
+void Server::move_player_down() {
+	move_rect(&player_rect, { 0, 10 });
+
+	//If the player already behind the limit, correct it's position
+	if (player_rect.top > window_size.y - player_rect.height)
+		player_rect.top = window_size.y - player_rect.height;
+}
+
+void Server::move_enemy_up() {
+	move_rect(&enemy_rect, { 0, -10 });
+
+	if (enemy_rect.top < 0.0F) //If the enemy already behind the limit, correct it's position
+		enemy_rect.top = 0.0F;
+}
+
+void Server::move_enemy_down() {
+	move_rect(&enemy_rect, { 0, 10 });
+
+	//If the enemy already behind the limit, correct it's position
+	if (enemy_rect.top > window_size.y - enemy_rect.height)
+		enemy_rect.top = window_size.y - enemy_rect.height;
+}
+//END player and enemy movement
 void Server::update_ball_movement() {
 	//Move in the specified direction
 	ball_pos += { std::sin(ball_direction) * ball_speed, std::cos(ball_direction) * ball_speed };

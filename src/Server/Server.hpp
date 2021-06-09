@@ -20,6 +20,7 @@
 
 #include <SFML/Graphics/Rect.hpp>
 
+#include "../GameManager.hpp"
 #include "ServerSettings.hpp"
 
 ///Server takes input like player's moves and
@@ -28,6 +29,8 @@ class Server {
 public:
 	///Create a new server using the specified settings
 	static Server* create(ServerSettings setting);
+
+	Server(sf::Vector2u window_size);
 
 	///Update server's state: ball, collisions, movement etc
 	virtual void update() = 0;
@@ -39,11 +42,18 @@ public:
 	///Get the current position of the ball
 	sf::Vector2f get_ball_pos();
 
-	///Request player move up
-	virtual void move_player_up() = 0;
+	///Request player to move up
+	virtual void move_player_up();
+	///Request player to move down
+	virtual void move_player_down();
 
-private:
-	ServerSettings::ServerType server_type;
+protected:
+	///Request enemy to move up
+	virtual void move_enemy_up();
+	///Request enemy to move down
+	virtual void move_enemy_down();
+
+	GameType server_type;
 
 	sf::Vector2f ball_pos;
 	///Ball's radius in pixels
@@ -55,7 +65,7 @@ private:
 	///Ball's speed (pixels per frame)
 	float ball_speed;
 
-	sf::Vector2f window_size;
+	sf::Vector2u window_size;
 
 	sf::FloatRect player_rect, enemy_rect;
 
