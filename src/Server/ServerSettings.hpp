@@ -33,7 +33,7 @@ struct ServerSettings {
 	///Necessary setting
 	sf::FloatRect player_rect, enemy_rect;
 	///Necessary setting
-	sf::Keyboard::Key up_key = sf::Keyboard::W, down_key = sf::Keyboard::S;
+	sf::Vector2f window_size;
 
 	///Only for local multiplayer
 	sf::Keyboard::Key enemy_up_key = sf::Keyboard::Up, enemy_down_key = sf::Keyboard::Down;
