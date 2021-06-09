@@ -1,0 +1,40 @@
+/*
+ * PongX server settings structure
+ * Copyright (C) 2021  Artem Kliminskyi <artemklim50@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#pragma once
+
+#include <SFML/Graphics/Rect.hpp>
+#include <SFML/Window/Keyboard.hpp>
+
+struct ServerSettings {
+	enum ServerType : unsigned char {
+		LocalMultiplayer, Singleplayer, LocalNetworkHost, LocalNetworkClient
+	};
+
+	///Necessary setting
+	ServerType server_type;
+	///Necessary setting
+	float ball_radius;
+	///Necessary setting
+	sf::FloatRect player_rect, enemy_rect;
+	///Necessary setting
+	sf::Keyboard::Key up_key = sf::Keyboard::W, down_key = sf::Keyboard::S;
+
+	///Only for local multiplayer
+	sf::Keyboard::Key enemy_up_key = sf::Keyboard::Up, enemy_down_key = sf::Keyboard::Down;
+};
