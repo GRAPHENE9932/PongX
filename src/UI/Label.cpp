@@ -33,6 +33,7 @@ void Label::init(sf::RenderWindow* window, sf::String string, sf::Vector2f relat
 	this->window = window; //Assign fields
 	this->relative_position = relative_position;
 	this->relative_to = relative_to;
+	this->original_rel_pos = relative_position;
 
 	//Initialize text
 	text.setString(string);
@@ -40,29 +41,37 @@ void Label::init(sf::RenderWindow* window, sf::String string, sf::Vector2f relat
 	text.setFillColor(color);
 	text.setFont(*font);
 
+	refresh_pos();
+}
+
+void Label::set_color(sf::Color color) {
+	text.setFillColor(color);
+}
+
+void Label::set_text(sf::String string) {
+	text.setString(string);
+	refresh_pos();
+}
+
+void Label::refresh_pos() {
 	//          +--------------------------+ <- Y position that we have assigned
 	// Offset-> |                          |
-	//          +--------------------------+ <- The real Y position we can get using getGlobalBounds()
+	//          +--------------------------+ <- The real Y position we can get using the getGlobalBounds()
 	//          | ----- ----- \   /  ----- |
 	//          |   |   |      \ /     |   |
 	//          |   |   |----   |      |   |
 	//          +---|---|------/-\-----|---+
 	//          |   |   ----- /   \    |   |
 	//          +--------------------------+
-
 	//Get bounds and calculate the offset
-	auto text_bounds = text.getGlobalBounds();
+	auto text_bounds = text.getLocalBounds();
 	//Reassign the relative position
-	this->relative_position.y -= text_bounds.top;
+	this->relative_position.y = original_rel_pos.y - text_bounds.top;
+	//this->relative_position.y -= text_bounds.top;
 
 	this->size = { text_bounds.width, text_bounds.height };
 	text.setPosition(pos_x(), pos_y());
 	//pos_x() and pos_y() works properly only when size correctly assigned. See UIControl class
-}
-
-
-void Label::set_color(sf::Color color) {
-	text.setFillColor(color);
 }
 
 void Label::render() {

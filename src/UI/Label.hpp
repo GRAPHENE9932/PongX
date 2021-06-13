@@ -35,8 +35,16 @@ public:
 	///Set fill color of the text
 	void set_color(sf::Color color);
 
+	///Set new text of the label
+	void set_text(sf::String string);
+
 	void render() override;
 
 private:
 	sf::Text text;
+	///Original relative position that assigned in the init()
+	sf::Vector2f original_rel_pos;
+
+	///Refresh the position to correct
+	void refresh_pos();
 };

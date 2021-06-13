@@ -21,6 +21,16 @@
 Button::Button(sf::RenderWindow* window, sf::Vector2f relative_position, UIControl::Relativity relative_to,
 			   sf::Vector2f size, sf::String title, unsigned int font_size, sf::Color color,
 			   sf::Color bg_color, sf::Font* font) {
+	init(window, relative_position, relative_to, size, title, font_size, color, bg_color, font);
+}
+
+Button::Button() {
+	//Do nothing
+}
+
+void Button::init(sf::RenderWindow* window, sf::Vector2f relative_position, UIControl::Relativity relative_to,
+				  sf::Vector2f size, sf::String title, unsigned int font_size, sf::Color color,
+				  sf::Color bg_color, sf::Font* font) {
 	this->window = window; //Assign fields
 	this->color = color;
 	this->bg_color = bg_color;

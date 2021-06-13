@@ -39,3 +39,6 @@ isExecutable=false
 
 [Project]
 VersionControlSupport=kdevgit
+
+[SourceFileTemplates]
+LastUsedTemplate=/home/artem/.local/share/kdevfiletemplates/template_descriptions/cpp_basic.desktop
