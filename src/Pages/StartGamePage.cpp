@@ -26,11 +26,11 @@ StartGamePage::StartGamePage(sf::RenderWindow* window, GameType game_type) {
 
 	//BEGIN UI
 	//Initialize start game button
-	Button* start_button = new Button(window, { -425, -125 }, UIControl::RightBottom, { 400, 100 }, "Start", 48);
+	Button* start_button = new Button(window, { -425, -125 }, UIControl::RightBottom, { 400, 100 }, "Start", 72);
 	start_clicked = &start_button->clicked;
 
 	//Initialize back button
-	Button* back_button = new Button(window, { 25, -125 }, UIControl::LeftBottom, { 400, 100 }, "Back", 48);
+	Button* back_button = new Button(window, { 25, -125 }, UIControl::LeftBottom, { 400, 100 }, "Back", 72);
 	back_clicked = &back_button->clicked;
 
 	ui_list.push_back(start_button);

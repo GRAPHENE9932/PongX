@@ -26,10 +26,10 @@ MainMenuPage::MainMenuPage(sf::RenderWindow* window) {
 
 	//BEGIN UI
 	//Initialize the logo label
-	Label* logo_label = new Label(window, "PongX", { 0, 20 }, UIControl::CenterTop, 120);
+	Label* logo_label = new Label(window, "PongX", { 0, 20 }, UIControl::CenterTop, 170);
 	//Initialize the local multiplayer button
 	Button* local_multiplayer_button = new Button(window, { 0, 0 }, UIControl::CenterCenter, { 500, 100 },
-												  "Local multiplayer", 40);
+												  "Local multiplayer", 72);
 	local_multiplayer_clicked = &local_multiplayer_button->clicked;
 
 	//Add controls to the list
