@@ -2,3 +2,7 @@
 debug/
 release/
 build/
+
+#KDevelop project files
+*.kdev4
+.kdev4/
