@@ -48,6 +48,9 @@ public:
 	///WARNING: visible effect only after the render() function
 	void set_precision(unsigned char precision);
 
+	///This should be called after setting of all values
+	void update_text();
+
 	///Get the current value of the spinbox
 	float get_value();
 

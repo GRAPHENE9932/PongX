@@ -17,6 +17,7 @@
  */
 
 #include "../UI/Button.hpp"
+#include "../UI/SpinBox.hpp"
 #include "MainMenuPage.hpp"
 #include "StartGamePage.hpp"
 
@@ -35,8 +36,22 @@ StartGamePage::StartGamePage(sf::RenderWindow* window, GameType game_type) {
 									 { 400, 100 }, "Back", 72);
 	back_clicked = &back_button->clicked;
 
+	//Initialize the ball size spinbox and it's label
+	Label* ball_size_label = new Label(window, "Ball size", { 25, 25 }, UIControl::LeftTop, UIControl::LeftTop,
+									   36);
+	ball_size_spinbox = new SpinBox(window, { 25, 60 }, UIControl::LeftTop, UIControl::LeftTop,
+											 { 200, 75 }, 40);
+	ball_size_spinbox->set_minimal(10.0F);
+	ball_size_spinbox->set_maximum(300.0F);
+	ball_size_spinbox->set_step(10.0F);
+	ball_size_spinbox->set_value(20.0F);
+	ball_size_spinbox->set_precision(0);
+	ball_size_spinbox->update_text();
+
 	ui_list.push_back(start_button);
 	ui_list.push_back(back_button);
+	ui_list.push_back(ball_size_label);
+	ui_list.push_back(ball_size_spinbox);
 	//END UI
 }
 
@@ -59,7 +74,10 @@ void StartGamePage::render() {
 
 void StartGamePage::start_click() {
 	//Create a new game page
-	Page* new_page = new GamePage(window, game_type);
+	ServerSettings settings; //Initialize settings
+	settings.ball_radius = ball_size_spinbox->get_value();
+	settings.server_type = game_type;
+	Page* new_page = new GamePage(window, settings);
 	//Switch to this page
 	GameManager::switch_page(new_page);
 }

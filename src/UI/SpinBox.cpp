@@ -89,6 +89,17 @@ void SpinBox::set_precision(unsigned char precision) {
 	this->precision = precision;
 }
 
+float SpinBox::get_value() {
+	return value;
+}
+
+void SpinBox::update_text() {
+	//Set value to the label
+	std::stringstream ss;
+	ss << std::fixed << std::setprecision(precision) << value;
+	label.set_text(ss.str());
+}
+
 void SpinBox::render() {
 	window->draw(main_rect);
 	button_up.render();
@@ -106,9 +117,6 @@ void SpinBox::render() {
 			value = min;
 	}
 	if (button_down.clicked || button_up.clicked) {
-		//Set value to the label
-		std::stringstream ss;
-		ss << std::fixed << std::setprecision(precision) << value;
-		label.set_text(ss.str());
+		update_text();
 	}
 }

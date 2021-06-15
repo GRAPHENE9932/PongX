@@ -25,7 +25,7 @@
 ///Page where the main game playing. Contains field, player and enemy
 class GamePage : public Page {
 public:
-	GamePage(sf::RenderWindow* window, GameType game_type);
+	GamePage(sf::RenderWindow* window, ServerSettings settings);
 
 	void render() override;
 

@@ -20,6 +20,7 @@
 
 #include "GamePage.hpp"
 #include "../UI/UIControl.hpp"
+#include "../UI/SpinBox.hpp"
 #include "Page.hpp"
 
 class StartGamePage : public Page {
@@ -32,6 +33,7 @@ public:
 private:
 	///UI controls list for this page
 	std::vector<UIControl*> ui_list;
+	SpinBox* ball_size_spinbox;
 
 	GameType game_type;
 

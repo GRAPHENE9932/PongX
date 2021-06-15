@@ -25,22 +25,18 @@ constexpr float PI = 3.14159265359F;
 ///If multiply this constant by an angle in degrees, result is in radians
 constexpr float DEG2RAD = PI / 180.0F;
 
-GamePage::GamePage(sf::RenderWindow* window, GameType game_type) {
+GamePage::GamePage(sf::RenderWindow* window, ServerSettings settings) {
 	this->window = window;
 
-	ServerSettings server_settings; //Create server settings
+	settings.enemy_rect = sf::FloatRect( { 1225, 0 }, { 45, 225 } );
+	settings.player_rect = sf::FloatRect( { 10, 0 }, { 45, 225 } );
+	settings.window_size = window->getSize();
+	settings.ball_speed = 5.0F;
 
-	server_settings.ball_radius = 25.0F; //Set ball radius
-	server_settings.enemy_rect = sf::FloatRect( { 1225, 0 }, { 45, 225 } );
-	server_settings.player_rect = sf::FloatRect( { 10, 0 }, { 45, 225 } );
-	server_settings.window_size = window->getSize();
-	server_settings.ball_speed = 5.0F;
-	server_settings.server_type = game_type;
-
-	switch (game_type) {
+	switch (settings.server_type) {
 		case LocalMultiplayer: {
-			server_settings.enemy_up_key = sf::Keyboard::Up;
-			server_settings.enemy_down_key = sf::Keyboard::Down;
+			settings.enemy_up_key = sf::Keyboard::Up;
+			settings.enemy_down_key = sf::Keyboard::Down;
 			break;
 		}
 		default: {
@@ -48,21 +44,21 @@ GamePage::GamePage(sf::RenderWindow* window, GameType game_type) {
 		}
 	}
 
-	server = Server::create(server_settings);
+	server = Server::create(settings);
 
 	//Initialize player shape
-	player_shape.setSize({ server_settings.player_rect.width, server_settings.player_rect.height });
-	player_shape.setPosition({ server_settings.player_rect.left, server_settings.player_rect.top });
+	player_shape.setSize({ settings.player_rect.width, settings.player_rect.height });
+	player_shape.setPosition({ settings.player_rect.left, settings.player_rect.top });
 	player_shape.setFillColor(sf::Color::White);
 	//Initialize enemy shape
-	enemy_shape.setSize({ server_settings.enemy_rect.width, server_settings.enemy_rect.height });
-	enemy_shape.setPosition({ server_settings.enemy_rect.left, server_settings.enemy_rect.top });
+	enemy_shape.setSize({ settings.enemy_rect.width, settings.enemy_rect.height });
+	enemy_shape.setPosition({ settings.enemy_rect.left, settings.enemy_rect.top });
 	enemy_shape.setFillColor(sf::Color::White);
 
 	//Initialize ball shape
-	ball_shape.setOrigin(server_settings.ball_radius, server_settings.ball_radius);
+	ball_shape.setOrigin(settings.ball_radius, settings.ball_radius);
 	ball_shape.setFillColor(sf::Color::White);
-	ball_shape.setRadius(server_settings.ball_radius);
+	ball_shape.setRadius(settings.ball_radius);
 }
 
 void GamePage::render() {
