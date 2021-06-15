@@ -18,10 +18,11 @@
 #include "FPSMeter.hpp"
 
 FPSMeter::FPSMeter(sf::RenderWindow* window, sf::Vector2f relative_position, UIControl::Relativity relative_to,
-				   unsigned int font_size, sf::Color color, sf::Font* font) {
+				   UIControl::Relativity alignment, unsigned int font_size, sf::Color color, sf::Font* font) {
 	this->window = window;
 	this->relative_position = relative_position;
 	this->relative_to = relative_to;
+	this->alignment = alignment;
 
 	//Set basic parameters of text
 	text.setCharacterSize(font_size);

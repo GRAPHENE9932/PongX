@@ -19,9 +19,9 @@
 #include "Button.hpp"
 
 Button::Button(sf::RenderWindow* window, sf::Vector2f relative_position, UIControl::Relativity relative_to,
-			   sf::Vector2f size, sf::String title, unsigned int font_size, sf::Color color,
-			   sf::Color bg_color, sf::Font* font) {
-	init(window, relative_position, relative_to, size, title, font_size, color, bg_color, font);
+			   UIControl::Relativity alignment, sf::Vector2f size, sf::String title, unsigned int font_size,
+			   sf::Color color, sf::Color bg_color, sf::Font* font) {
+	init(window, relative_position, relative_to, alignment, size, title, font_size, color, bg_color, font);
 }
 
 Button::Button() {
@@ -29,13 +29,14 @@ Button::Button() {
 }
 
 void Button::init(sf::RenderWindow* window, sf::Vector2f relative_position, UIControl::Relativity relative_to,
-				  sf::Vector2f size, sf::String title, unsigned int font_size, sf::Color color,
-				  sf::Color bg_color, sf::Font* font) {
+				  UIControl::Relativity alignment, sf::Vector2f size, sf::String title, unsigned int font_size,
+				  sf::Color color, sf::Color bg_color, sf::Font* font) {
 	this->window = window; //Assign fields
 	this->color = color;
 	this->bg_color = bg_color;
 	this->relative_position = relative_position;
 	this->relative_to = relative_to;
+	this->alignment = alignment;
 	this->size = size;
 
 	//Setup the main rect
@@ -47,7 +48,7 @@ void Button::init(sf::RenderWindow* window, sf::Vector2f relative_position, UICo
 
 	//Setup the label
 	label.parent = this; //And set it in the center of the button
-	label.init(window, title, { 0, 0 }, UIControl::CenterCenter, font_size, color, font);
+	label.init(window, title, { 0, 0 }, UIControl::CenterCenter, UIControl::CenterCenter, font_size, color, font);
 }
 
 void Button::render() {

@@ -26,8 +26,9 @@
 class SpinBox : public UIControl {
 public:
 	SpinBox(sf::RenderWindow* window, sf::Vector2f relative_position, UIControl::Relativity relative_to,
-			sf::Vector2f size, unsigned int font_size, sf::Color color = sf::Color::White,
-			sf::Color bg_color = sf::Color::Black, sf::Font* font = GameManager::get_default_font());
+			UIControl::Relativity alignment, sf::Vector2f size, unsigned int font_size,
+			sf::Color color = sf::Color::White, sf::Color bg_color = sf::Color::Black,
+			sf::Font* font = GameManager::get_default_font());
 
 	void render() override;
 

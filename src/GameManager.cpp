@@ -34,7 +34,8 @@ int GameManager::start() {
 	main_window.setFramerateLimit(60);
 
 	//Add FPS ui control
-	FPSMeter* fps_meter = new FPSMeter(&main_window, { 0, 0 }, UIControl::LeftTop, 36, sf::Color::White);
+	FPSMeter* fps_meter = new FPSMeter(&main_window, { 0, 0 }, UIControl::LeftTop, UIControl::LeftTop, 36,
+									   sf::Color::White);
 	ui_list.push_back(fps_meter);
 
 	//Create page

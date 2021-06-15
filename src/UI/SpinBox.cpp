@@ -22,11 +22,13 @@
 #include "SpinBox.hpp"
 
 SpinBox::SpinBox(sf::RenderWindow* window, sf::Vector2f relative_position, UIControl::Relativity relative_to,
-				 sf::Vector2f size, unsigned int font_size, sf::Color color, sf::Color bg_color, sf::Font* font) {
+				 UIControl::Relativity alignment, sf::Vector2f size, unsigned int font_size, sf::Color color,
+				 sf::Color bg_color, sf::Font* font) {
 	//Assign the base variables
 	this->window = window;
 	this->relative_position = relative_position;
 	this->relative_to = relative_to;
+	this->alignment = alignment;
 	this->size = size;
 
 	//Compute buttons and label width
@@ -38,15 +40,16 @@ SpinBox::SpinBox(sf::RenderWindow* window, sf::Vector2f relative_position, UICon
 	float label_center = label_width * 0.5F - size.x * 0.5F;
 	//Init label
 	label.parent = this;
-	label.init(window, "", { label_center, 0 }, UIControl::CenterCenter, font_size);
+	label.init(window, "", { label_center, 0 }, UIControl::CenterCenter, UIControl::CenterCenter, font_size,
+			   color, font);
 
 	//Initialize the buttons
 	button_up.parent = this;
-	button_up.init(window, { -buttons_width, 0 }, UIControl::RightTop, { buttons_width, size.y * 0.5F },
-				   "+", 24);
+	button_up.init(window, { -buttons_width, 0 }, UIControl::RightTop, UIControl::LeftTop,
+				   { buttons_width, size.y * 0.5F }, "+", 24);
 
 	button_down.parent = this;
-	button_down.init(window, { -buttons_width, size.y * 0.5F }, UIControl::RightTop,
+	button_down.init(window, { -buttons_width, size.y * 0.5F }, UIControl::RightTop, UIControl::LeftTop,
 					 { buttons_width, size.y * 0.5F }, "-", 24);
 
 	//Initialize the main rect

@@ -24,7 +24,7 @@
 class FPSMeter : public UIControl {
 public:
 	FPSMeter(sf::RenderWindow* window, sf::Vector2f relative_position, UIControl::Relativity relative_to,
-			 unsigned int font_size, sf::Color color = sf::Color::White,
+			 UIControl::Relativity alignment, unsigned int font_size, sf::Color color = sf::Color::White,
 			 sf::Font* font = GameManager::get_default_font());
 
 	void render() override;

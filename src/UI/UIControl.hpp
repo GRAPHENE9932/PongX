@@ -42,8 +42,11 @@ public:
 	virtual void render() = 0;
 
 protected:
-	Relativity relative_to;
+	Relativity relative_to, alignment;
 	sf::Vector2f relative_position = { 0, 0 };
 	sf::Vector2f size = { 0, 0 };
 	sf::RenderWindow* window = nullptr;
+
+	float align_offset_x() const;
+	float align_offset_y() const;
 };

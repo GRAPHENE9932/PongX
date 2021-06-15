@@ -19,9 +19,9 @@
 #include "Label.hpp"
 
 Label::Label(sf::RenderWindow* window, sf::String string, sf::Vector2f relative_position,
-			 UIControl::Relativity relative_to, unsigned int font_size, sf::Color color,
-			 sf::Font* font) {
-	init(window, string, relative_position, relative_to, font_size, color, font);
+			 UIControl::Relativity relative_to, UIControl::Relativity alignment, unsigned int font_size,
+			 sf::Color color, sf::Font* font) {
+	init(window, string, relative_position, relative_to, alignment, font_size, color, font);
 }
 
 Label::Label() {
@@ -29,10 +29,12 @@ Label::Label() {
 }
 
 void Label::init(sf::RenderWindow* window, sf::String string, sf::Vector2f relative_position,
-				 UIControl::Relativity relative_to, unsigned int font_size, sf::Color color, sf::Font* font) {
+				 UIControl::Relativity relative_to, UIControl::Relativity alignment, unsigned int font_size,
+				 sf::Color color, sf::Font* font) {
 	this->window = window; //Assign fields
 	this->relative_position = relative_position;
 	this->relative_to = relative_to;
+	this->alignment = alignment;
 	this->original_rel_pos = relative_position;
 
 	//Initialize text
