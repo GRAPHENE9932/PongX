@@ -27,9 +27,10 @@ struct ServerSettings {
 	///Necessary setting
 	GameType server_type;
 	///Necessary setting
-	float ball_radius, ball_speed;
+	float ball_radius = 10.0F, ball_speed = 5.0F;
 	///Necessary setting
-	sf::FloatRect player_rect, enemy_rect;
+	sf::FloatRect player_rect = sf::FloatRect( { 10, 0 }, { 45, 225 } ),
+        enemy_rect = sf::FloatRect( { 1225, 0 }, { 45, 225 } );
 	///Necessary setting
 	sf::Vector2u window_size;
 

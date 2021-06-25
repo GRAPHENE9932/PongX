@@ -33,7 +33,7 @@ public:
 private:
 	///UI controls list for this page
 	std::vector<UIControl*> ui_list;
-	SpinBox* ball_size_spinbox;
+	SpinBox* ball_size_spinbox, *ball_speed_spinbox;
 
 	GameType game_type;
 

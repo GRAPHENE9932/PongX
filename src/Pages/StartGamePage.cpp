@@ -48,10 +48,24 @@ StartGamePage::StartGamePage(sf::RenderWindow* window, GameType game_type) {
 	ball_size_spinbox->set_precision(0);
 	ball_size_spinbox->update_text();
 
+	//Initialize speed of the ball spinbox
+	Label* ball_speed_label = new Label(window, "Ball speed", { 25, 145 }, UIControl::LeftTop, UIControl::LeftTop,
+										36);
+	ball_speed_spinbox = new SpinBox(window, { 25, 180 }, UIControl::LeftTop, UIControl::LeftTop, { 200, 75 },
+									 40);
+	ball_speed_spinbox->set_minimal(1.0F);
+	ball_speed_spinbox->set_maximum(50.0F);
+	ball_speed_spinbox->set_step(1.0F);
+	ball_speed_spinbox->set_value(5.0F);
+	ball_speed_spinbox->set_precision(0);
+	ball_speed_spinbox->update_text();
+
 	ui_list.push_back(start_button);
 	ui_list.push_back(back_button);
 	ui_list.push_back(ball_size_label);
 	ui_list.push_back(ball_size_spinbox);
+	ui_list.push_back(ball_speed_label);
+	ui_list.push_back(ball_speed_spinbox);
 	//END UI
 }
 
@@ -76,6 +90,7 @@ void StartGamePage::start_click() {
 	//Create a new game page
 	ServerSettings settings; //Initialize settings
 	settings.ball_radius = ball_size_spinbox->get_value();
+    settings.ball_speed = ball_speed_spinbox->get_value();
 	settings.server_type = game_type;
 	Page* new_page = new GamePage(window, settings);
 	//Switch to this page

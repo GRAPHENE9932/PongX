@@ -21,17 +21,10 @@
 #include "../Server/ServerSettings.hpp"
 #include "GamePage.hpp"
 
-constexpr float PI = 3.14159265359F;
-///If multiply this constant by an angle in degrees, result is in radians
-constexpr float DEG2RAD = PI / 180.0F;
-
 GamePage::GamePage(sf::RenderWindow* window, ServerSettings settings) {
 	this->window = window;
 
-	settings.enemy_rect = sf::FloatRect( { 1225, 0 }, { 45, 225 } );
-	settings.player_rect = sf::FloatRect( { 10, 0 }, { 45, 225 } );
 	settings.window_size = window->getSize();
-	settings.ball_speed = 5.0F;
 
 	switch (settings.server_type) {
 		case LocalMultiplayer: {
