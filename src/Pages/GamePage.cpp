@@ -52,6 +52,15 @@ GamePage::GamePage(sf::RenderWindow* window, ServerSettings settings) {
 	ball_shape.setOrigin(settings.ball_radius, settings.ball_radius);
 	ball_shape.setFillColor(sf::Color::White);
 	ball_shape.setRadius(settings.ball_radius);
+
+    //Initialize separator
+    separator.setSize({ 6, static_cast<float>(window->getSize().y) });
+    separator.setPosition({ (window->getSize().x - separator.getSize().x) * 0.5F, 0 });
+    separator.setFillColor(sf::Color::White);
+
+    //Initialize player's and enemy's score text
+    player_score_text.init(window, "0", { -10, 10 }, UIControl::CenterTop, UIControl::RightTop, 150);
+    enemy_score_text.init(window, "0", { 10, 10 }, UIControl::CenterTop, UIControl::LeftTop, 150);
 }
 
 void GamePage::render() {
@@ -63,6 +72,7 @@ void GamePage::render() {
 	//Update server
 	server->update();
 
+	//Set position of the player
 	player_shape.setPosition({ server->get_player_rect().left, server->get_player_rect().top }); //Set position
 
 	//Set position of the enemy
@@ -71,8 +81,15 @@ void GamePage::render() {
 	//Syncronize ball_shape and ball_pos
 	ball_shape.setPosition(server->get_ball_pos());
 
+	//Syncronize scores
+	player_score_text.set_text(std::to_string(server->get_player_score()));
+	enemy_score_text.set_text(std::to_string(server->get_enemy_score()));
+
 	//Render
 	window->draw(player_shape);
 	window->draw(enemy_shape);
 	window->draw(ball_shape);
+    window->draw(separator);
+    player_score_text.render();
+    enemy_score_text.render();
 }

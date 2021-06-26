@@ -41,6 +41,10 @@ public:
 	sf::FloatRect get_enemy_rect();
 	///Get the current position of the ball
 	sf::Vector2f get_ball_pos();
+    ///Get current player's score
+    unsigned int get_player_score();
+    ///Get current enemy's score
+    unsigned int get_enemy_score();
 
 	///Request player to move up
 	virtual void move_player_up();
@@ -64,6 +68,9 @@ protected:
 	float ball_direction;
 	///Ball's speed (pixels per frame)
 	float ball_speed;
+    unsigned int player_score = 0, enemy_score = 0;
+    ///If true, ball suspended until input from player or enemy incomes
+    bool waiting_for_input = true;
 
 	sf::Vector2u window_size;
 
@@ -72,6 +79,11 @@ protected:
 	///Update ball movement, check for collisions and change direction
 	void update_ball_movement();
 
+	///When someone scores
+	///@param is_player who scored?
+	void scored(bool is_player);
+
+	//BEGIN maths
 	///Calculate distance between the 2 points
 	inline float distance(sf::Vector2f point_1, sf::Vector2f point_2);
 
@@ -89,4 +101,5 @@ protected:
 	///Is specified horizontal line intersects with a specified circle?
 	inline bool intersects_with_horizontal_line(float line_1_x, float line_2_x, float line_y,
 												sf::Vector2f circle_pos, float radius);
+	//END maths
 };

@@ -51,8 +51,11 @@ void Label::set_color(sf::Color color) {
 }
 
 void Label::set_text(sf::String string) {
-	text.setString(string);
-	refresh_pos();
+	//Set text only if current text and provided text differs (optimization)
+	if (string != text.getString()) {
+		text.setString(string);
+		refresh_pos();
+	}
 }
 
 void Label::refresh_pos() {
@@ -69,7 +72,7 @@ void Label::refresh_pos() {
 	auto text_bounds = text.getLocalBounds();
 	//Reassign the relative position
 	this->relative_position.y = original_rel_pos.y - text_bounds.top;
-	//this->relative_position.y -= text_bounds.top;
+    this->relative_position.x = original_rel_pos.x - text_bounds.left;
 
 	this->size = { text_bounds.width, text_bounds.height };
 	text.setPosition(pos_x(), pos_y());

@@ -67,6 +67,14 @@ sf::FloatRect Server::get_enemy_rect() {
 	return enemy_rect;
 }
 
+unsigned int Server::get_player_score() {
+    return player_score;
+}
+
+unsigned int Server::get_enemy_score() {
+    return enemy_score;
+}
+
 //BEGIN maths
 inline float Server::distance(sf::Vector2f point_1, sf::Vector2f point_2) {
 	return std::abs(point_1.x - point_2.x) * std::abs(point_1.x - point_2.x) +
@@ -157,6 +165,8 @@ void Server::move_player_up() {
 
 	if (player_rect.top < 0.0F) //If the player already behind the limit, correct it's position
 		player_rect.top = 0.0F;
+
+	waiting_for_input = false; //Input received just now
 }
 
 void Server::move_player_down() {
@@ -165,6 +175,8 @@ void Server::move_player_down() {
 	//If the player already behind the limit, correct it's position
 	if (player_rect.top > window_size.y - player_rect.height)
 		player_rect.top = window_size.y - player_rect.height;
+
+	waiting_for_input = false; //Input received just now
 }
 
 void Server::move_enemy_up() {
@@ -172,6 +184,8 @@ void Server::move_enemy_up() {
 
 	if (enemy_rect.top < 0.0F) //If the enemy already behind the limit, correct it's position
 		enemy_rect.top = 0.0F;
+
+	waiting_for_input = false; //Input received just now
 }
 
 void Server::move_enemy_down() {
@@ -180,9 +194,15 @@ void Server::move_enemy_down() {
 	//If the enemy already behind the limit, correct it's position
 	if (enemy_rect.top > window_size.y - enemy_rect.height)
 		enemy_rect.top = window_size.y - enemy_rect.height;
+
+	waiting_for_input = false; //Input received just now
 }
 //END player and enemy movement
 void Server::update_ball_movement() {
+    //Do not move if the ball suspended
+	if (waiting_for_input)
+		return;
+
 	//Move in the specified direction
 	ball_pos += { std::sin(ball_direction) * ball_speed, std::cos(ball_direction) * ball_speed };
 
@@ -262,5 +282,25 @@ void Server::update_ball_movement() {
 		ball_pos.y = player_rect.top + player_rect.height + ball_radius;
 	else if (enemy_bottom)
 		ball_pos.y = enemy_rect.top + enemy_rect.height + ball_radius;
+
+	//Check if someone scored
+	if (ball_pos.x - ball_radius <= 0)
+		scored(false); //Enemy scored
+	else if (ball_pos.x + ball_radius >= window_size.x)
+		scored(true); //Player scored
 	//END check collision with the player and the enemy
 }
+
+void Server::scored(bool is_player) {
+	if (is_player)
+		player_score++;
+	else
+		enemy_score++;
+
+	ball_pos = { window_size.x * 0.5F, window_size.y * 0.5F }; //Place the ball to the center of the window
+	ball_direction = random_number_double_range(10.0F * DEG2RAD, 170.0F * DEG2RAD, //Random direction
+												190.0F * DEG2RAD, 350.0F * DEG2RAD);
+
+	waiting_for_input = true; //Suspend
+}
+

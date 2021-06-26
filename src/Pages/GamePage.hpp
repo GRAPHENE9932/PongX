@@ -20,6 +20,7 @@
 
 #include "../Server/Server.hpp"
 #include "../GameManager.hpp"
+#include "../UI/Label.hpp"
 #include "Page.hpp"
 
 ///Page where the main game playing. Contains field, player and enemy
@@ -36,4 +37,10 @@ private:
 
 	///Shape only for render. Syncronized with ball_pos and radius
 	sf::CircleShape ball_shape;
+    ///Halfs of screen verticol separator
+    sf::RectangleShape separator;
+    ///Player's score text
+    Label player_score_text;
+    ///Enemy's score text
+    Label enemy_score_text;
 };
