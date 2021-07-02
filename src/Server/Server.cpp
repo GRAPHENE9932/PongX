@@ -77,8 +77,8 @@ unsigned int Server::get_enemy_score() {
 
 //BEGIN maths
 inline float Server::distance(sf::Vector2f point_1, sf::Vector2f point_2) {
-	return std::abs(point_1.x - point_2.x) * std::abs(point_1.x - point_2.x) +
-		std::abs(point_1.y - point_2.y) * std::abs(point_1.y - point_2.y);
+	return std::sqrt((point_1.x - point_2.x) * (point_1.x - point_2.x) +
+		(point_1.y - point_2.y) * (point_1.y - point_2.y));
 }
 
 inline void Server::move_rect(sf::FloatRect* rect, sf::Vector2f rel_pos) {
@@ -220,78 +220,143 @@ void Server::update_ball_movement() {
 	}
 	//END check collision with the bounds (window)
 
+	//  |          |                         |          |
+	//  |     2    |   4                  9  |     7    |
+	//  |          |                         |          |
+	//  +==========+------             ------+==========+
+	//            ||                         ||
+	//            ||                         ||
+	//            ||                         ||
+	//            ||                         ||
+	//            ||                         ||
+	//   Player   ||   1      if no       6  ||  Enemy
+	//            ||        collision        ||
+	//            ||            0            ||
+	//            ||                         ||
+	//            ||                         ||
+	//            ||                         ||
+	//  +==========+------             ------+==========+
+	//  |          |                         |          |
+	//  |     3    |   5                 10  |     8    |
+	//  |          |                         |          |
 	//BEGIN check collision with the player and the enemy
-	bool player_side = intersects_with_vertical_line(player_rect.top,
-													 player_rect.top + player_rect.height,
-													 player_rect.left + player_rect.width,
-													 ball_pos, ball_radius); //Player's right side
+	//Check horizontal surfaces, vertical surfaces and corners separately
+	unsigned char collision = 0; //See scheme above
 
-	bool enemy_side = intersects_with_vertical_line(enemy_rect.top,
-													enemy_rect.top + enemy_rect.height,
-													enemy_rect.left,
-													ball_pos, ball_radius); //Enemy's left side
-
-	bool player_top = intersects_with_horizontal_line(player_rect.left,
-													  player_rect.left + player_rect.width,
-													  player_rect.top,
-													  ball_pos, ball_radius); //Player's top side
-
-	bool player_bottom = intersects_with_horizontal_line(player_rect.left,
-														 player_rect.left + player_rect.width,
-														 player_rect.top + player_rect.height,
-														 ball_pos, ball_radius); //Player's bottom side
-
-	bool enemy_top = intersects_with_horizontal_line(enemy_rect.left,
-													 enemy_rect.left + enemy_rect.width,
-													 enemy_rect.top,
-													 ball_pos, ball_radius); //Enemy's top side
-
-	bool enemy_bottom = intersects_with_horizontal_line(enemy_rect.left,
-														enemy_rect.left + enemy_rect.width,
-														enemy_rect.top + enemy_rect.height,
-														ball_pos, ball_radius); //Enemy's bottom side
-
-	if (player_side || enemy_side) {
-		//                           \  ||
-		//                  Before -> \ ||
-		//                             \||
-		//                              0| <- Ball
-		//                             /||
-		//                   After -> / ||
-		//                           /  ||
-		ball_direction = 360.0F * DEG2RAD - ball_direction;
+	//CORNERS
+	//4
+	if (distance({ player_rect.left + player_rect.width, player_rect.top },
+		ball_pos) <= ball_radius) {
+		collision = 4;
 	}
-	else if (player_top || player_bottom || enemy_top || enemy_bottom) {
-		// +================o==================+
-		// |               /|\                 |
-		// |    Before -> / | \ <- After       |
-		// |             /  |  \               |
-		ball_direction = 180.0F * DEG2RAD - ball_direction;
+	//5
+	else if (distance({ player_rect.left + player_rect.width, player_rect.top + player_rect.height },
+		ball_pos) <= ball_radius) {
+		collision = 5;
+	}
+	//9
+	else if (distance({ enemy_rect.left, enemy_rect.top }, ball_pos) <= ball_radius) {
+		collision = 9;
+	}
+	//10
+	else if (distance({ enemy_rect.left, enemy_rect.top + enemy_rect.height },
+		ball_pos) <= ball_radius) {
+		collision = 10;
+	}
+	//VERTICAL SURFACES
+	//1
+	if (ball_pos.x - ball_radius <= player_rect.left + player_rect.width &&
+		ball_pos.y >= player_rect.top &&
+		ball_pos.y <= player_rect.top + player_rect.height) {
+		collision = 1;
+	}
+	//6
+	else if (ball_pos.x + ball_radius >= enemy_rect.left &&
+		ball_pos.y >= enemy_rect.top &&
+		ball_pos.y <= enemy_rect.top + enemy_rect.height) {
+		collision = 6;
+	}
+	//HORIZONTAL SURFACES
+	//2
+	else if (ball_pos.y + ball_radius >= player_rect.top &&
+		ball_pos.y <= player_rect.top + player_rect.height * 0.5F &&
+		ball_pos.x >= player_rect.left &&
+		ball_pos.x <= player_rect.left + player_rect.width) {
+		collision = 2;
+	}
+	//3
+	else if (ball_pos.y - ball_radius <= player_rect.top + player_rect.height &&
+		ball_pos.y >= player_rect.top + player_rect.height * 0.5F &&
+		ball_pos.x >= player_rect.left &&
+		ball_pos.x <= player_rect.left + player_rect.width) {
+		collision = 3;
+	}
+	//7
+	else if (ball_pos.y + ball_radius >= enemy_rect.top &&
+		ball_pos.y <= enemy_rect.top + enemy_rect.height * 0.5F &&
+		ball_pos.x >= enemy_rect.left &&
+		ball_pos.x <= enemy_rect.left + enemy_rect.width) {
+		collision = 7;
+	}
+	//8
+	else if (ball_pos.y - ball_radius <= enemy_rect.top + enemy_rect.height &&
+		ball_pos.y >= enemy_rect.top + enemy_rect.height * 0.5F &&
+		ball_pos.x >= enemy_rect.left &&
+		ball_pos.x <= enemy_rect.left + enemy_rect.width) {
+		collision = 8;
 	}
 
-	//Prevent collision again
-	if (player_side)
-		ball_pos.x = player_rect.left + player_rect.width + ball_radius;
-	else if (enemy_side)
-		ball_pos.x = enemy_rect.left - ball_radius;
-	else if (player_top)
-		ball_pos.y = player_rect.top - ball_radius;
-	else if (enemy_top)
-		ball_pos.y = enemy_rect.top - ball_radius;
-	else if (player_bottom)
-		ball_pos.y = player_rect.top + player_rect.height + ball_radius;
-	else if (enemy_bottom)
-		ball_pos.y = enemy_rect.top + enemy_rect.height + ball_radius;
+	if (!collided_before) {
+		switch (collision) {
+			case 1:
+			case 6: {
+				//                           \  ||
+				//                  Before -> \ ||
+				//                             \||
+				//                              0| <- Ball
+				//                             /||
+				//                   After -> / ||
+				//                           /  ||
+				ball_direction = 360.0F * DEG2RAD - ball_direction;
+				break;
+			}
+			case 2:
+			case 3:
+			case 7:
+			case 8: {
+				// +================o==================+
+				// |               /|\                 |
+				// |    Before -> / | \ <- After       |
+				// |             /  |  \               |
+				ball_direction = 180.0F * DEG2RAD - ball_direction;
+				break;
+			}
+			case 4:
+			case 5:
+			case 9:
+			case 10: {
+				//                             ||
+				//                             ||
+				//                             o=====
+				//                            /
+				//                           /
+				//                Before -> / <- After
+				//                         /
+				//                        /
+				ball_direction += 180.0F * DEG2RAD;
+				break;
+			}
+		}
+	}
 
-	//Check if someone scored
-	if (ball_pos.x - ball_radius <= 0)
-		scored(false); //Enemy scored
-	else if (ball_pos.x + ball_radius >= window_size.x)
-		scored(true); //Player scored
+	//Set value to variable "collided_before"
+	collided_before = collision != 0;
 	//END check collision with the player and the enemy
+
 }
 
 void Server::scored(bool is_player) {
+	//Add 1 point to one of the scores
 	if (is_player)
 		player_score++;
 	else

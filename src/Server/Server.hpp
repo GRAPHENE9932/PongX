@@ -71,6 +71,8 @@ protected:
     unsigned int player_score = 0, enemy_score = 0;
     ///If true, ball suspended until input from player or enemy incomes
     bool waiting_for_input = true;
+	///Is collision occured on the last frame
+	bool collided_before = false;
 
 	sf::Vector2u window_size;
 
@@ -84,13 +86,13 @@ protected:
 	void scored(bool is_player);
 
 	//BEGIN maths
-	///Calculate distance between the 2 points
+	///Calculate distance between 2 points
 	inline float distance(sf::Vector2f point_1, sf::Vector2f point_2);
 
 	///Add current rect position to specified position
 	inline void move_rect(sf::FloatRect* rect, sf::Vector2f rel_pos);
 
-	///Generate random number in range [min_1;max_1]&[min_2;max_2)
+	///Generate random number in the range [min_1;max_1]&[min_2;max_2)
 	inline float random_number_double_range(const float min_1, const float max_1,
 											const float min_2, const float max_2);
 
