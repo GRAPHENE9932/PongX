@@ -43,69 +43,9 @@ float gm::random_number_double_range(const float min_1, const float max_1,
 		return min_2 + raw_random - (max_1 - min_1);
 }
 
-bool gm::intersects_with_vertical_line(float line_1_y, float line_2_y, float line_x,
-									   sf::Vector2f circle_pos, float radius) {
-	//Force line points to be in order line_1_y < line_2_y
-	if (line_1_y > line_2_y)
-		std::swap(line_1_y, line_2_y);
-
-	//Check if the circle center contained inside Y borders of the line
-	// +===========================================+
-	// |                                           |
-	// |----+--------------------------------------| <- Y border
-	// |    |                                      |
-	// |    | <- Line                              |
-	// |    |                                      |
-	// |----+--------------------------------------| <- Y border
-	// |                                           |
-	// |                                           |
-	// |                                           |
-	// +===========================================+
-	if (circle_pos.y >= line_1_y && circle_pos.y <= line_2_y) {
-		//Check intersection in X axis
-		return std::abs(line_x - circle_pos.x) <= radius;
-	}
-	else { //Circle still have a chance
-		//If distance from the line points to the center less than radius, then yes, intersects
-		float distance_1 = distance({ line_x, line_1_y }, circle_pos);
-		float distance_2 = distance({ line_x, line_2_y }, circle_pos);
-
-		return std::min(distance_1, distance_2) <= radius;
-	}
-}
-
-bool gm::intersects_with_horizontal_line(float line_1_x, float line_2_x, float line_y,
-										 sf::Vector2f circle_pos, float radius) {
-	//Force line points to be in order line_1.x < line_2.x
-	if (line_1_x > line_2_x)
-		std::swap(line_1_x, line_2_x);
-
-	//Check if the circle center contained inside X borders of the line
-	// +=======================================+
-	// |          |           |                |
-	// |          +-----------+ <- Line        |
-	// |          |           |                |
-	// |          |           |                |
-	// |X border->|           | <- X border    |
-	// |          |           |                |
-	// |          |           |                |
-	// +=======================================+
-	if (circle_pos.x >= line_1_x && circle_pos.x <= line_2_x) {
-		//Check intersection in Y axis
-		return std::abs(line_y - circle_pos.y) <= radius;
-	}
-	else { //Circle still have a chance
-		//If distance from the line points to the center less than radius, then yes, intersects
-		float distance_1 = distance({ line_1_x, line_y }, circle_pos);
-		float distance_2 = distance({ line_2_x, line_y }, circle_pos);
-
-		return std::min(distance_1, distance_2) <= radius;
-	}
-}
-
-bool gm::ver_segment_and_line_intersection(float line_tangent, sf::Vector2f line_point,
-										   float line_seg_y_1, float line_seg_y_2,
-										   float line_seg_x, sf::Vector2f& intersection_point) {
+bool gm::ver_segment_line_intersection(float line_tangent, sf::Vector2f line_point,
+									   float line_seg_y_1, float line_seg_y_2,
+									   float line_seg_x, sf::Vector2f& intersection_point) {
 	//          ---
 	//           |/
 	//           *
@@ -134,9 +74,9 @@ bool gm::ver_segment_and_line_intersection(float line_tangent, sf::Vector2f line
 	return true;
 }
 
-bool gm::hor_segment_and_line_intersection(float line_tangent, sf::Vector2f line_point,
-										   float line_seg_x_1, float line_seg_x_2,
-										   float line_seg_y, sf::Vector2f& intersection_point) {
+bool gm::hor_segment_line_intersection(float line_tangent, sf::Vector2f line_point,
+									   float line_seg_x_1, float line_seg_x_2,
+									   float line_seg_y, sf::Vector2f& intersection_point) {
 	//                /
 	//     |---------*---------|
 	//              /

@@ -30,14 +30,6 @@ namespace gm {
 	float random_number_double_range(const float min_1, const float max_1,
 									 const float min_2, const float max_2);
 
-	///Is specified vertical line intersects with a specified circle?
-	bool intersects_with_vertical_line(float line_1_y, float line_2_y, float line_x,
-									   sf::Vector2f circle_pos, float radius);
-
-	///Is specified horizontal line intersects with a specified circle?
-	bool intersects_with_horizontal_line(float line_1_x, float line_2_x, float line_y,
-										 sf::Vector2f circle_pos, float radius);
-
 	///Get the intersection point of the specified vertical line segment and line
 	///@param line_tangent tangent (k coefficient) of the line. k = tan(angle)
 	///@param line_point random point on a line
@@ -46,9 +38,9 @@ namespace gm {
 	///@param line_seg_x X coordinate of the vertical line segment
 	///@param intersection_point the result: intersection point (reference)
 	///@returns does the specified line segment intersects with the specified line?
-	static bool ver_segment_and_line_intersection(float line_tangent, sf::Vector2f line_point,
-												  float line_seg_y_1, float line_seg_y_2,
-												  float line_seg_x, sf::Vector2f& intersection_point);
+	bool ver_segment_line_intersection(float line_tangent, sf::Vector2f line_point,
+									   float line_seg_y_1, float line_seg_y_2,
+									   float line_seg_x, sf::Vector2f& intersection_point);
 
 	///Get the intersection point of specified horizontal line segment and line
 	///@param line_tangent tangent (k coefficient) of the line. k = tan(angle)
@@ -58,7 +50,7 @@ namespace gm {
 	///@param line_seg_y Y coordinate of the horizontal line segment
 	///@param intersection_point the result: intersection point (reference)
 	///@returns does the specified line segment intersects with the specified line?
-	static bool hor_segment_and_line_intersection(float line_tangent, sf::Vector2f line_point,
-												  float line_seg_x_1, float line_seg_x_2,
-												  float line_seg_y, sf::Vector2f& intersection_point);
+	bool hor_segment_line_intersection(float line_tangent, sf::Vector2f line_point,
+									   float line_seg_x_1, float line_seg_x_2,
+									   float line_seg_y, sf::Vector2f& intersection_point);
 }
