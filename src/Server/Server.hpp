@@ -63,8 +63,6 @@ protected:
 	///Ball's radius in pixels
 	float ball_radius;
 	///Ball's direction in radians
-	///0 rad - bottom
-	///PI/2 rad - right
 	float ball_direction;
 	///Ball's speed (pixels per frame)
 	float ball_speed;
@@ -84,24 +82,4 @@ protected:
 	///When someone scores
 	///@param is_player who scored?
 	void scored(bool is_player);
-
-	//BEGIN maths
-	///Calculate distance between 2 points
-	inline float distance(sf::Vector2f point_1, sf::Vector2f point_2);
-
-	///Add current rect position to specified position
-	inline void move_rect(sf::FloatRect* rect, sf::Vector2f rel_pos);
-
-	///Generate random number in the range [min_1;max_1]&[min_2;max_2)
-	inline float random_number_double_range(const float min_1, const float max_1,
-											const float min_2, const float max_2);
-
-	///Is specified vertical line intersects with a specified circle?
-	inline bool intersects_with_vertical_line(float line_1_y, float line_2_y, float line_x,
-											  sf::Vector2f circle_pos, float radius);
-
-	///Is specified horizontal line intersects with a specified circle?
-	inline bool intersects_with_horizontal_line(float line_1_x, float line_2_x, float line_y,
-												sf::Vector2f circle_pos, float radius);
-	//END maths
 };
