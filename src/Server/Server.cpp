@@ -123,7 +123,7 @@ void Server::update_ball_movement() {
 	//Move in the specified direction
 	ball_pos += { -std::sin(ball_direction) * ball_speed, std::cos(ball_direction) * ball_speed };
 
-	//BEGIN check collision with the bounds (window)
+	//BEGIN check collision with bounds (window)
 	bool top_win_bound = ball_pos.y - ball_radius <= 0; //Top global bound
 
 	bool bottom_win_bound = ball_pos.y + ball_radius >= window_size.y; //Bottom global bound
@@ -135,7 +135,7 @@ void Server::update_ball_movement() {
 		// |             /  |  \               |
 		ball_direction = 180.0F * DEG2RAD - ball_direction;
 	}
-	//END check collision with the bounds (window)
+	//END check collision with bounds (window)
 
 	//  |          |                         |          |
 	//  |     2    |   4                  9  |     7    |
@@ -269,6 +269,66 @@ void Server::update_ball_movement() {
 	//Set value to variable "collided_before"
 	collided_before = collision != 0;
 	//END check collision with the player and the enemy
+
+	//BEGIN prevent collision again (get out the ball)
+	//We dont need to prevent collision if there was no collision
+	if (collision == 0)
+		return;
+
+	//           +============+         /
+	//        ---|            |---     / <- ball's direction
+	//       -   |            |   -   /
+	//     ||----|------------|----||/
+	//     ||    |            |    |* <- new ball center
+	//     ||    |            |    /|
+	//     ||    |            |   /||
+	//     ||    |            |  / ||
+	//     ||    |   Player   | * <- current ball center
+	//     ||    |             /   ||
+	//     ||    |            /    ||
+	//     ||    |           /|    ||
+	//     ||    |          / |    ||
+	//     ||----|---------/--|----||
+	//       -   |        /   |   - <- rounded corners with radius of ball
+	//        ---|       /    |---
+	//           +======*=====+ <- ignore that intersection point
+	//                 /
+
+	//Get the line's tangent
+	const float tangent = std::tan(ball_direction);
+
+	//Find the intersection points with rounded rectangle
+	std::vector<sf::Vector2f> intersection_points(2);
+	unsigned char tmp_points_amount =
+		gm::rounded_rect_line_intersection(tangent, ball_pos, player_rect, ball_radius,
+										   intersection_points[0], intersection_points[1]);
+	intersection_points.resize(tmp_points_amount);
+
+	//We need only the front side of line (ray) and rear side, but with length that equals radius,
+	//so, filter the intersection points
+	for (unsigned char i = 0; i < intersection_points.size(); i++) {
+		//Get tangent sign of line that intersects ball center and current intersection point
+		bool tmp_tan_sign = ball_pos.y - intersection_points[i].y != intersection_points[i].x - ball_pos.x;
+
+		//If sign of tangents is not similar and distance is greater than radius, then
+		if (!(std::signbit(tangent) == tmp_tan_sign ||
+			gm::distance(ball_pos, intersection_points[i]) < ball_radius))
+			intersection_points.erase(intersection_points.begin() + i); //Erase it
+	}
+
+	//If there is more than 1 element left, take the closest
+	sf::Vector2f new_position = intersection_points[0];
+	if (intersection_points.size() > 1) {
+		for (unsigned char i = 1; i < intersection_points.size(); i++) {
+			if (gm::distance(intersection_points[i], ball_pos) <
+				gm::distance(new_position, ball_pos))
+				new_position = intersection_points[i];
+		}
+	}
+
+	//Place ball in the ready position
+	ball_pos = new_position;
+	//END prevent collision again (get out the ball)
 }
 
 void Server::scored(bool is_player) {

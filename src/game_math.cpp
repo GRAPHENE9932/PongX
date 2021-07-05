@@ -101,3 +101,163 @@ bool gm::hor_segment_line_intersection(float line_tangent, sf::Vector2f line_poi
 	intersection_point = { raw_intersection_x, line_seg_y };
 	return true;
 }
+
+unsigned char gm::circle_line_intersection(sf::Vector2f circle_pos, float radius, float line_tangent,
+										   sf::Vector2f line_point,
+										   sf::Vector2f& point_1, sf::Vector2f& point_2) {
+	//Compute the b (d) variable (y=kx+b)
+	const float d = line_point.y - line_tangent * line_point.x;
+
+	//Compute the t (temp) variable
+	const float t = radius * radius * (1 + line_tangent * line_tangent) -
+		(circle_pos.y - line_tangent * circle_pos.x - d) * (circle_pos.y - line_tangent * circle_pos.x - d);
+
+	if (t < 0) //We will have to take the square root of t
+		return 0; //So, here is no intersection
+
+	//By formula
+	point_1.x = (circle_pos.x + circle_pos.y * line_tangent - d * line_tangent + std::sqrt(t)) /
+		(1 + line_tangent * line_tangent);
+
+	point_2.x = (circle_pos.x + circle_pos.y * line_tangent - d * line_tangent - std::sqrt(t)) /
+		(1 + line_tangent * line_tangent);
+
+	point_1.y = (d + circle_pos.x * line_tangent + circle_pos.y * line_tangent * line_tangent +
+		line_tangent * std::sqrt(t)) /
+		(1 + line_tangent * line_tangent);
+
+	point_2.y = (d + circle_pos.x * line_tangent + circle_pos.y * line_tangent * line_tangent -
+		line_tangent * std::sqrt(t)) /
+		(1 + line_tangent * line_tangent);
+
+	//If points coincide
+	if (point_1 == point_2)
+		return 1;
+
+	return 2;
+}
+
+unsigned char gm::rounded_rect_line_intersection(float line_tangent, sf::Vector2f line_point,
+												 sf::FloatRect base_rect, float radius,
+												 sf::Vector2f& point_1, sf::Vector2f& point_2) {
+	//           +===================+
+	//        ---|                   |---
+	//       - 5 |         1         | 6 -
+	//     ||----|-------------------|----||
+	//     ||    |                   |    ||
+	//     ||    |                   |    ||
+	//     ||    |                   |    ||
+	//     ||    |                   |    ||
+	//     || 4  |     Base rect     |  2 ||
+	//     ||    |                   |    ||
+	//     ||    |                   |    ||
+	//     ||    |                   |    ||
+	//     ||    |                   |    ||
+	//     ||----|-------------------|----||
+	//       - 8 |                   | 7 -
+	//        ---|         3         |---
+	//           +===================+
+
+	std::vector<sf::Vector2f> intersection_points;
+	sf::Vector2f tmp_points[2];
+	//Handle the straigh sides (1, 2, 3, 4)
+	//1
+	if (hor_segment_line_intersection(line_tangent, line_point, base_rect.left,
+									  base_rect.left + base_rect.width, base_rect.top - radius,
+									  tmp_points[0])) {
+		intersection_points.push_back(tmp_points[0]);
+	}
+	//2
+	if (ver_segment_line_intersection(line_tangent, line_point, base_rect.top,
+		base_rect.top + base_rect.height, base_rect.left + base_rect.width + radius,
+									  tmp_points[0])) {
+		intersection_points.push_back(tmp_points[0]);
+	}
+	//3
+	if (hor_segment_line_intersection(line_tangent, line_point, base_rect.left,
+		base_rect.left + base_rect.width, base_rect.top + base_rect.height + radius,
+									  tmp_points[0])) {
+		intersection_points.push_back(tmp_points[0]);
+	}
+	//4
+	if (ver_segment_line_intersection(line_tangent, line_point, base_rect.top,
+		base_rect.top + base_rect.height, base_rect.left - radius,
+									  tmp_points[0])) {
+		intersection_points.push_back(tmp_points[0]);
+	}
+
+	//Handle the rounded corners (5, 6, 7, 8)
+	unsigned char tmp_amount;
+	sf::Vector2f tmp_center = {base_rect.left, base_rect.top};
+	//5
+	tmp_amount = circle_line_intersection(tmp_center, radius, line_tangent, line_point,
+										  tmp_points[0], tmp_points[1]);
+	switch (tmp_amount) {
+		case 2: {
+			if (tmp_points[1].x - tmp_center.x < 0 && tmp_points[1].y - tmp_center.y < 0)
+				intersection_points.push_back(tmp_points[1]);
+		}
+		case 1: {
+			if (tmp_points[0].x - tmp_center.x < 0 && tmp_points[0].y - tmp_center.y < 0)
+				intersection_points.push_back(tmp_points[0]);
+			break;
+		}
+	}
+	//6
+	tmp_amount = circle_line_intersection({base_rect.left + base_rect.left, base_rect.top}, radius,
+										  line_tangent, line_point,
+										  tmp_points[0], tmp_points[1]);
+	switch (tmp_amount) {
+		case 2: {
+			if (tmp_points[1].x - tmp_center.x > 0 && tmp_points[1].y - tmp_center.y < 0)
+				intersection_points.push_back(tmp_points[1]);
+		}
+		case 1: {
+			if (tmp_points[0].x - tmp_center.x > 0 && tmp_points[0].y - tmp_center.y < 0)
+				intersection_points.push_back(tmp_points[0]);
+			break;
+		}
+	}
+	//7
+	tmp_amount = circle_line_intersection({base_rect.left + base_rect.left, base_rect.top + base_rect.height},
+										  radius, line_tangent, line_point,
+										  tmp_points[0], tmp_points[1]);
+	switch (tmp_amount) {
+		case 2: {
+			if (tmp_points[1].x - tmp_center.x > 0 && tmp_points[1].y - tmp_center.y > 0)
+				intersection_points.push_back(tmp_points[1]);
+		}
+		case 1: {
+			if (tmp_points[0].x - tmp_center.x > 0 && tmp_points[0].y - tmp_center.y > 0)
+				intersection_points.push_back(tmp_points[0]);
+			break;
+		}
+	}
+	//8
+	tmp_amount = circle_line_intersection({base_rect.left, base_rect.top + base_rect.height},
+										  radius, line_tangent, line_point,
+										  tmp_points[0], tmp_points[1]);
+	switch (tmp_amount) {
+		case 2: {
+			if (tmp_points[1].x - tmp_center.x < 0 && tmp_points[1].y - tmp_center.y > 0)
+				intersection_points.push_back(tmp_points[1]);
+		}
+		case 1: {
+			if (tmp_points[0].x - tmp_center.x < 0 && tmp_points[0].y - tmp_center.y > 0)
+				intersection_points.push_back(tmp_points[0]);
+			break;
+		}
+	}
+
+	//Return result
+	switch (intersection_points.size()) {
+		case 2: {
+			point_2 = intersection_points[1];
+		}
+		case 1: {
+			point_1 = intersection_points[0];
+			break;
+		}
+	}
+	return intersection_points.size();
+}

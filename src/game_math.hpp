@@ -32,25 +32,50 @@ namespace gm {
 
 	///Get the intersection point of the specified vertical line segment and line
 	///@param line_tangent tangent (k coefficient) of the line. k = tan(angle)
-	///@param line_point random point on a line
+	///@param line_point random point on line
 	///@param line_seg_y_1 Y coordinate of the first point of the line segment
 	///@param line_seg_y_2 Y coordinate of the second point of the line segment
 	///@param line_seg_x X coordinate of the vertical line segment
 	///@param intersection_point the result: intersection point (reference)
-	///@returns does the specified line segment intersects with the specified line?
+	///@returns does vertical line segment intersects with line?
 	bool ver_segment_line_intersection(float line_tangent, sf::Vector2f line_point,
 									   float line_seg_y_1, float line_seg_y_2,
 									   float line_seg_x, sf::Vector2f& intersection_point);
 
-	///Get the intersection point of specified horizontal line segment and line
+	///Compute the intersection point of specified horizontal line segment and line
 	///@param line_tangent tangent (k coefficient) of the line. k = tan(angle)
-	///@param line_point random point on a line
+	///@param line_point random point on line
 	///@param line_seg_x_1 X coordinate of the first point of the line segment
 	///@param line_seg_x_2 X coordinate of the second point of the line segment
 	///@param line_seg_y Y coordinate of the horizontal line segment
 	///@param intersection_point the result: intersection point (reference)
-	///@returns does the specified line segment intersects with the specified line?
+	///@returns does horizontal line segment intersects with line?
 	bool hor_segment_line_intersection(float line_tangent, sf::Vector2f line_point,
 									   float line_seg_x_1, float line_seg_x_2,
 									   float line_seg_y, sf::Vector2f& intersection_point);
+
+	///Compute the intersection points of specified circle and line
+	///@param circle_pos position of circle
+	///@param radius radius of circle
+	///@param line_tangent tangent (k coefficient) of the line. k = tan(angle)
+	///@param line_point random point on line
+	///@param point_1 first intersection point (reference)
+	///@param point_2 second intersection point (reference)
+	///@returns amount of intersection points
+	unsigned char circle_line_intersection(sf::Vector2f circle_pos, float radius, float line_tangent,
+										   sf::Vector2f line_point,
+										   sf::Vector2f& point_1, sf::Vector2f& point_2);
+
+	///Compute the intersection points of specified rounded rectangle and line
+	///@param line_tangent tangent (k coefficient) of the line. k = tan(angle)
+	///@param line_point random point on line
+	///@param base_rect base rect of rounded rect
+	///@param radius radius of rounded corners
+	///@param point_1 first intersection point (reference)
+	///@param point_2 second intersection point (reference)
+	///@returns amount of intersection points
+	unsigned char rounded_rect_line_intersection(float line_tangent, sf::Vector2f line_point,
+												 sf::FloatRect base_rect, float radius,
+												 sf::Vector2f& point_1, sf::Vector2f& point_2);
+
 }
