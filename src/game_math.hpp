@@ -18,6 +18,10 @@
 
 #pragma once
 
+#include <random>
+
+#include <SFML/Graphics.hpp>
+
 ///Game math namespace
 namespace gm {
 	///Calculate distance between 2 points
@@ -25,6 +29,9 @@ namespace gm {
 
 	///Add current rect position to specified position
 	void move_rect(sf::FloatRect* rect, sf::Vector2f rel_pos);
+
+	///Generates a random number in range [min;max)
+	float random_number(float min, float max);
 
 	///Generate random number in the range [min_1;max_1]&[min_2;max_2)
 	float random_number_double_range(const float min_1, const float max_1,

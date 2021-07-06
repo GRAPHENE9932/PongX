@@ -18,8 +18,12 @@
 
 #include <cmath>
 
-#include "GameManager.hpp"
 #include "game_math.hpp"
+
+///Thing that takes seed and produces random numbers
+std::mt19937 randomizer;
+///Is randomizer already initialized?
+bool randomizer_initialized;
 
 float gm::distance(sf::Vector2f point_1, sf::Vector2f point_2) {
 	return std::sqrt((point_1.x - point_2.x) * (point_1.x - point_2.x) +
@@ -31,10 +35,20 @@ void gm::move_rect(sf::FloatRect* rect, sf::Vector2f rel_pos) {
 	rect->top += rel_pos.y;
 }
 
+float gm::random_number(float min, float max) {
+	if (!randomizer_initialized) { //Initialize randomizer if it is not
+		std::random_device true_gen; //Get the true random number which used for seed
+		randomizer = std::mt19937(true_gen()); //Seed and initialize our randomizer
+	}
+	//This thing handles raw number from randomizer and turns it into the float in range [min;max)
+	std::uniform_real_distribution<float> distribution(min, max);
+	return distribution(randomizer); //Use distribution and randomizer to generate the number
+}
+
 float gm::random_number_double_range(const float min_1, const float max_1,
 									 const float min_2, const float max_2) {
 	float max = (max_1 - min_1) + (max_2 - min_2); //Prepare for number generation
-	float raw_random = GameManager::random_number(0.0F, max); //Generate raw number
+	float raw_random = random_number(0.0F, max); //Generate raw number
 
 	//If in first half of the range
 	if (raw_random <= max_1 - min_1)

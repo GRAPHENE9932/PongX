@@ -24,8 +24,6 @@
 std::vector<UIControl*> GameManager::ui_list;
 Page* GameManager::page = nullptr;
 sf::Font GameManager::default_font;
-std::mt19937 GameManager::randomizer;
-bool GameManager::randomizer_initialized = false;
 
 int GameManager::start() {
 	//Create a window
@@ -85,14 +83,4 @@ sf::Font* GameManager::get_default_font() {
 		default_font.loadFromFile("default.ttf");
 
 	return &default_font;
-}
-
-float GameManager::random_number(float min, float max) {
-	if (!randomizer_initialized) { //Initialize randomizer if it is not
-		std::random_device true_gen; //Get the true random number which used for seed
-		randomizer = std::mt19937(true_gen()); //Seed and initialize our randomizer
-	}
-	//This thing handles raw number from randomizer and turns it into the float in range [min;max)
-	std::uniform_real_distribution<float> distribution(min, max);
-	return distribution(randomizer); //Use distribution and randomizer to generate the number
 }
