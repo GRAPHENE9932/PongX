@@ -52,13 +52,6 @@ TEST(lines_intersection, horizontal) {
 
 	//Same, but with other line segment points
 	EXPECT_EQ(false, gm::hor_segment_line_intersection(3.5F, {0, 1}, -2.0F, 0.0F, 5.0F, tmp_result));
-
-	//Some crazy tests with infinity
-	EXPECT_EQ(true, gm::hor_segment_line_intersection(INF_F, {0, 0}, -1.0F, 1.0F, 0.0F, tmp_result));
-	EXPECT_EQ_V2(sf::Vector2f(0.0F, 0.0F), tmp_result);
-
-	EXPECT_EQ(true, gm::hor_segment_line_intersection(INF_F, {0, 0}, -1.0F, 1.0F, 5.0F, tmp_result));
-	EXPECT_EQ_V2(sf::Vector2f(0.0F, 5.0F), tmp_result);
 }
 
 TEST(lines_intersection, vertical) {
