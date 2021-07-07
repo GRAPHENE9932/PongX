@@ -1,5 +1,5 @@
 /*
- * <one line to give the program's name and a brief idea of what it does.>
+ * PongX line intersection unit test
  * Copyright (C) 2021  Artem Kliminskyi artemklim50@gmail.com
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,17 +20,8 @@
 
 #include <gtest/gtest.h>
 
+#include "macros.hpp"
 #include "../src/game_math.hpp"
-
-#define INF_F std::numeric_limits<float>().infinity()
-
-//Macros for sf::Vector
-#define EXPECT_EQ_V2(exp, orig) \
-	EXPECT_EQ(exp.x, orig.x); \
-	EXPECT_EQ(exp.y, orig.y);
-#define EXPECT_NEAR_V2(exp, orig, abs_error) \
-	EXPECT_NEAR(exp.x, orig.x, abs_error); \
-	EXPECT_NEAR(exp.y, orig.y, abs_error);
 
 TEST(lines_intersection, horizontal) {
 	sf::Vector2f tmp_result;
