@@ -144,6 +144,10 @@ unsigned char gm::circle_line_intersection(sf::Vector2f circle_pos, float radius
 		line_tangent * std::sqrt(t)) /
 		(1 + line_tangent * line_tangent);
 
+	//Consider that we have inverted Y axis
+	point_1.y = -point_1.y;
+	point_2.y = -point_2.y;
+
 	//If points coincide
 	if (point_1 == point_2)
 		return 1;
