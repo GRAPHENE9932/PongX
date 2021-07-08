@@ -119,6 +119,10 @@ bool gm::hor_segment_line_intersection(float line_tangent, sf::Vector2f line_poi
 unsigned char gm::circle_line_intersection(sf::Vector2f circle_pos, float radius, float line_tangent,
 										   sf::Vector2f line_point,
 										   sf::Vector2f& point_1, sf::Vector2f& point_2) {
+	//We have formula where +y is up and -y is down. But our Y coordinate is inverted.
+	//So, adapt the input data
+	circle_pos.y = -circle_pos.y;
+
 	//Compute the b (d) variable (y=kx+b)
 	const float d = line_point.y - line_tangent * line_point.x;
 
@@ -144,7 +148,8 @@ unsigned char gm::circle_line_intersection(sf::Vector2f circle_pos, float radius
 		line_tangent * std::sqrt(t)) /
 		(1 + line_tangent * line_tangent);
 
-	//Consider that we have inverted Y axis
+	//We have formula where +y is up and -y is down. But our Y coordinate is inverted.
+	//So, adapt the output data
 	point_1.y = -point_1.y;
 	point_2.y = -point_2.y;
 
