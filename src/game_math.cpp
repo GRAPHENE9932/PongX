@@ -119,9 +119,6 @@ bool gm::hor_segment_line_intersection(float line_tangent, sf::Vector2f line_poi
 unsigned char gm::circle_line_intersection(sf::Vector2f circle_pos, float radius, float line_tangent,
 										   sf::Vector2f line_point,
 										   sf::Vector2f& point_1, sf::Vector2f& point_2) {
-	//We have formula where +y is up and -y is down. But our Y coordinate is inverted.
-	//So, adapt the input data
-	circle_pos.y = -circle_pos.y;
 
 	//Compute the b (d) variable (y=kx+b)
 	const float d = line_point.y - line_tangent * line_point.x;
@@ -147,11 +144,6 @@ unsigned char gm::circle_line_intersection(sf::Vector2f circle_pos, float radius
 	point_2.y = (d + circle_pos.x * line_tangent + circle_pos.y * line_tangent * line_tangent -
 		line_tangent * std::sqrt(t)) /
 		(1 + line_tangent * line_tangent);
-
-	//We have formula where +y is up and -y is down. But our Y coordinate is inverted.
-	//So, adapt the output data
-	point_1.y = -point_1.y;
-	point_2.y = -point_2.y;
 
 	//If points coincide
 	if (point_1 == point_2)
@@ -180,7 +172,6 @@ unsigned char gm::rounded_rect_line_intersection(float line_tangent, sf::Vector2
 	//       - 8 |                   | 7 -
 	//        ---|         3         |---
 	//           +===================+
-
 	std::vector<sf::Vector2f> intersection_points;
 	sf::Vector2f tmp_points[2];
 	//Handle the straigh sides (1, 2, 3, 4)
@@ -217,56 +208,59 @@ unsigned char gm::rounded_rect_line_intersection(float line_tangent, sf::Vector2
 										  tmp_points[0], tmp_points[1]);
 	switch (tmp_amount) {
 		case 2: {
-			if (tmp_points[1].x - tmp_center.x < 0 && tmp_points[1].y - tmp_center.y < 0)
+			if (tmp_points[1].x < tmp_center.x && tmp_points[1].y < tmp_center.y)
 				intersection_points.push_back(tmp_points[1]);
 		}
 		case 1: {
-			if (tmp_points[0].x - tmp_center.x < 0 && tmp_points[0].y - tmp_center.y < 0)
+			if (tmp_points[0].x < tmp_center.x && tmp_points[0].y < tmp_center.y)
 				intersection_points.push_back(tmp_points[0]);
 			break;
 		}
 	}
 	//6
-	tmp_amount = circle_line_intersection({base_rect.left + base_rect.left, base_rect.top}, radius,
+	tmp_center = {base_rect.left + base_rect.left, base_rect.top};
+	tmp_amount = circle_line_intersection(tmp_center, radius,
 										  line_tangent, line_point,
 										  tmp_points[0], tmp_points[1]);
 	switch (tmp_amount) {
 		case 2: {
-			if (tmp_points[1].x - tmp_center.x > 0 && tmp_points[1].y - tmp_center.y < 0)
+			if (tmp_points[1].x > tmp_center.x && tmp_points[1].y < tmp_center.y)
 				intersection_points.push_back(tmp_points[1]);
 		}
 		case 1: {
-			if (tmp_points[0].x - tmp_center.x > 0 && tmp_points[0].y - tmp_center.y < 0)
+			if (tmp_points[1].x > tmp_center.x && tmp_points[1].y < tmp_center.y)
 				intersection_points.push_back(tmp_points[0]);
 			break;
 		}
 	}
 	//7
-	tmp_amount = circle_line_intersection({base_rect.left + base_rect.left, base_rect.top + base_rect.height},
+	tmp_center = {base_rect.left + base_rect.width, base_rect.top + base_rect.height};
+	tmp_amount = circle_line_intersection(tmp_center,
 										  radius, line_tangent, line_point,
 										  tmp_points[0], tmp_points[1]);
 	switch (tmp_amount) {
 		case 2: {
-			if (tmp_points[1].x - tmp_center.x > 0 && tmp_points[1].y - tmp_center.y > 0)
+			if (tmp_points[1].x > tmp_center.x && tmp_points[1].y > tmp_center.y)
 				intersection_points.push_back(tmp_points[1]);
 		}
 		case 1: {
-			if (tmp_points[0].x - tmp_center.x > 0 && tmp_points[0].y - tmp_center.y > 0)
+			if (tmp_points[0].x > tmp_center.x && tmp_points[0].y > tmp_center.y)
 				intersection_points.push_back(tmp_points[0]);
 			break;
 		}
 	}
 	//8
+	tmp_center = {base_rect.left, base_rect.top + base_rect.height};
 	tmp_amount = circle_line_intersection({base_rect.left, base_rect.top + base_rect.height},
 										  radius, line_tangent, line_point,
 										  tmp_points[0], tmp_points[1]);
 	switch (tmp_amount) {
 		case 2: {
-			if (tmp_points[1].x - tmp_center.x < 0 && tmp_points[1].y - tmp_center.y > 0)
+			if (tmp_points[1].x < tmp_center.x && tmp_points[1].y > tmp_center.y)
 				intersection_points.push_back(tmp_points[1]);
 		}
 		case 1: {
-			if (tmp_points[0].x - tmp_center.x < 0 && tmp_points[0].y - tmp_center.y > 0)
+			if (tmp_points[0].x < tmp_center.x && tmp_points[0].y > tmp_center.y)
 				intersection_points.push_back(tmp_points[0]);
 			break;
 		}
