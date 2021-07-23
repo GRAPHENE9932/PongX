@@ -71,4 +71,15 @@ TEST(shape_intersection, rounded_rectangle) {
 													tmp_result[0], tmp_result[1]));
 	EXPECT_NEAR_UNORDERED_V2_ARR_2(sf::Vector2f(-2.70711F, -2.70711F), sf::Vector2f(2.70711F, 2.70711F),
 								 tmp_result, 0.00001F);
+
+	//Line y=1 and rounded rect on 0;1, size 4x4, radius 1
+	EXPECT_EQ(2, gm::rounded_rect_line_intersection(0.0F, {0, 1}, sf::FloatRect(-2, -1, 4, 4), 1.0F,
+													tmp_result[0], tmp_result[1]));
+	EXPECT_EQ_UNORDERED_V2_ARR_2(sf::Vector2f(3, 1), sf::Vector2f(-3, 1), tmp_result);
+
+	//Line y=x+1 and rounded rect on 0;1, size 4x4, radius 1
+	EXPECT_EQ(2, gm::rounded_rect_line_intersection(1.0F, {0, 1}, sf::FloatRect(-2, -1, 4, 4), 1.0F,
+													tmp_result[0], tmp_result[1]));
+	EXPECT_NEAR_UNORDERED_V2_ARR_2(sf::Vector2f(-2.70711F, -1.70711F), sf::Vector2f(2.70711F, 3.70711F),
+								   tmp_result, 0.00001F);
 }

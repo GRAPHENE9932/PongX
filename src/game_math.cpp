@@ -119,7 +119,6 @@ bool gm::hor_segment_line_intersection(float line_tangent, sf::Vector2f line_poi
 unsigned char gm::circle_line_intersection(sf::Vector2f circle_pos, float radius, float line_tangent,
 										   sf::Vector2f line_point,
 										   sf::Vector2f& point_1, sf::Vector2f& point_2) {
-
 	//Compute the b (d) variable (y=kx+b)
 	const float d = line_point.y - line_tangent * line_point.x;
 
