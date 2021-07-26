@@ -19,7 +19,6 @@
 #pragma once
 
 #include <vector>
-#include <random>
 
 #include "Pages/Page.hpp"
 #include "UI/UIControl.hpp"
@@ -40,9 +39,6 @@ public:
 	///Get default font ("default.ttf"). This function loads the font only once, then just return cached
 	static sf::Font* get_default_font();
 
-	///Generates a random number in range [min;max)
-	static float random_number(float min, float max);
-
 private:
 	///Global UI controls list
 	static std::vector<UIControl*> ui_list;
@@ -51,9 +47,4 @@ private:
 
 	///Cached default font
 	static sf::Font default_font;
-
-	///Thing that takes seed and produces random numbers
-	static std::mt19937 randomizer;
-	///Is randomizer already initialized?
-	static bool randomizer_initialized;
 };
