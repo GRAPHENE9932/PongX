@@ -60,6 +60,10 @@ sf::Vector2f Server::get_ball_pos() {
 	return ball_pos;
 }
 
+float Server::get_ball_dir(){
+	return ball_direction;
+}
+
 sf::FloatRect Server::get_player_rect() {
 	return player_rect;
 }
@@ -120,15 +124,21 @@ void Server::update_ball_movement() {
 	if (waiting_for_input)
 		return;
 
-	//BEGIN check collision with bounds (window)
-	bool top_win_bound = ball_pos.y - ball_radius <= 0; //Top global bound
-	bool bottom_win_bound = ball_pos.y + ball_radius >= window_size.y; //Bottom global bound
+	///Direction before the modifications on this frame
+	auto old_direction = ball_direction;
 
-	if (top_win_bound)
-		ball_pos.y = ball_radius;
-	else if (bottom_win_bound)
-		ball_pos.y = window_size.y - ball_radius;
+	//Predict the next ball position (ignoring everything, but speed and direction)
+	next_ball_pos = ball_pos +
+		sf::Vector2f(std::sin(old_direction) * ball_speed, std::cos(old_direction) * ball_speed);
 
+	//BEGIN check collision of next ball with bounds of window
+	bool top_win_bound = next_ball_pos.y - ball_radius <= 0; //Top global bound
+	bool bottom_win_bound = next_ball_pos.y + ball_radius >= window_size.y; //Bottom global bound
+
+	//Clamp the position of the ball
+	std::clamp(next_ball_pos.y, ball_radius, window_size.y - ball_radius);
+
+	//Change the direction of the ball considering the collisions with horizontal window bounds
 	if (top_win_bound || bottom_win_bound) {
 		// +================o==================+
 		// |               /|\                 |
@@ -136,7 +146,7 @@ void Server::update_ball_movement() {
 		// |             /  |  \               |
 		ball_direction = 180.0F * DEG2RAD - ball_direction;
 	}
-	//END check collision with bounds (window)
+	//END check collision with bounds of window
 
 	//  |          |                         |          |
 	//  |     2    |   4                  9  |     7    |
@@ -164,71 +174,71 @@ void Server::update_ball_movement() {
 	//CORNERS
 	//4
 	if (gm::distance({ player_rect.left + player_rect.width, player_rect.top },
-		ball_pos) <= ball_radius &&
-		ball_pos.x >= player_rect.left + player_rect.width &&
-		ball_pos.y <= player_rect.top) {
+		next_ball_pos) <= ball_radius &&
+		next_ball_pos.x >= player_rect.left + player_rect.width &&
+		next_ball_pos.y <= player_rect.top) {
 		collision = 4;
 	}
 	//5
 	else if (gm::distance({ player_rect.left + player_rect.width, player_rect.top + player_rect.height },
-		ball_pos) <= ball_radius &&
-		ball_pos.x >= player_rect.left + player_rect.width &&
-		ball_pos.y >= player_rect.top + player_rect.height) {
+		next_ball_pos) <= ball_radius &&
+		next_ball_pos.x >= player_rect.left + player_rect.width &&
+		next_ball_pos.y >= player_rect.top + player_rect.height) {
 		collision = 5;
 	}
 	//9
-	else if (gm::distance({ enemy_rect.left, enemy_rect.top }, ball_pos) <= ball_radius &&
-		ball_pos.x <= enemy_rect.left &&
-		ball_pos.y <= enemy_rect.top) {
+	else if (gm::distance({ enemy_rect.left, enemy_rect.top }, next_ball_pos) <= ball_radius &&
+		next_ball_pos.x <= enemy_rect.left &&
+		next_ball_pos.y <= enemy_rect.top) {
 		collision = 9;
 	}
 	//10
 	else if (gm::distance({ enemy_rect.left, enemy_rect.top + enemy_rect.height },
-		ball_pos) <= ball_radius &&
-		ball_pos.x <= enemy_rect.left &&
-		ball_pos.y >= enemy_rect.top + enemy_rect.height) {
+		next_ball_pos) <= ball_radius &&
+		next_ball_pos.x <= enemy_rect.left &&
+		next_ball_pos.y >= enemy_rect.top + enemy_rect.height) {
 		collision = 10;
 	}
 	//VERTICAL SURFACES
 	//1
-	if (ball_pos.x - ball_radius <= player_rect.left + player_rect.width &&
-		ball_pos.y >= player_rect.top &&
-		ball_pos.y <= player_rect.top + player_rect.height) {
+	if (next_ball_pos.x - ball_radius <= player_rect.left + player_rect.width &&
+		next_ball_pos.y >= player_rect.top &&
+		next_ball_pos.y <= player_rect.top + player_rect.height) {
 		collision = 1;
 	}
 	//6
-	else if (ball_pos.x + ball_radius >= enemy_rect.left &&
-		ball_pos.y >= enemy_rect.top &&
-		ball_pos.y <= enemy_rect.top + enemy_rect.height) {
+	else if (next_ball_pos.x + ball_radius >= enemy_rect.left &&
+		next_ball_pos.y >= enemy_rect.top &&
+		next_ball_pos.y <= enemy_rect.top + enemy_rect.height) {
 		collision = 6;
 	}
 	//HORIZONTAL SURFACES
 	//2
-	else if (ball_pos.y + ball_radius >= player_rect.top &&
-		ball_pos.y <= player_rect.top + player_rect.height * 0.5F &&
-		ball_pos.x >= player_rect.left &&
-		ball_pos.x <= player_rect.left + player_rect.width) {
+	else if (next_ball_pos.y + ball_radius >= player_rect.top &&
+		next_ball_pos.y <= player_rect.top + player_rect.height * 0.5F &&
+		next_ball_pos.x >= player_rect.left &&
+		next_ball_pos.x <= player_rect.left + player_rect.width) {
 		collision = 2;
 	}
 	//3
-	else if (ball_pos.y - ball_radius <= player_rect.top + player_rect.height &&
-		ball_pos.y >= player_rect.top + player_rect.height * 0.5F &&
-		ball_pos.x >= player_rect.left &&
-		ball_pos.x <= player_rect.left + player_rect.width) {
+	else if (next_ball_pos.y - ball_radius <= player_rect.top + player_rect.height &&
+		next_ball_pos.y >= player_rect.top + player_rect.height * 0.5F &&
+		next_ball_pos.x >= player_rect.left &&
+		next_ball_pos.x <= player_rect.left + player_rect.width) {
 		collision = 3;
 	}
 	//7
-	else if (ball_pos.y + ball_radius >= enemy_rect.top &&
-		ball_pos.y <= enemy_rect.top + enemy_rect.height * 0.5F &&
-		ball_pos.x >= enemy_rect.left &&
-		ball_pos.x <= enemy_rect.left + enemy_rect.width) {
+	else if (next_ball_pos.y + ball_radius >= enemy_rect.top &&
+		next_ball_pos.y <= enemy_rect.top + enemy_rect.height * 0.5F &&
+		next_ball_pos.x >= enemy_rect.left &&
+		next_ball_pos.x <= enemy_rect.left + enemy_rect.width) {
 		collision = 7;
 	}
 	//8
-	else if (ball_pos.y - ball_radius <= enemy_rect.top + enemy_rect.height &&
-		ball_pos.y >= enemy_rect.top + enemy_rect.height * 0.5F &&
-		ball_pos.x >= enemy_rect.left &&
-		ball_pos.x <= enemy_rect.left + enemy_rect.width) {
+	else if (next_ball_pos.y - ball_radius <= enemy_rect.top + enemy_rect.height &&
+		next_ball_pos.y >= enemy_rect.top + enemy_rect.height * 0.5F &&
+		next_ball_pos.x >= enemy_rect.left &&
+		next_ball_pos.x <= enemy_rect.left + enemy_rect.width) {
 		collision = 8;
 	}
 
@@ -282,85 +292,31 @@ void Server::update_ball_movement() {
 	//BEGIN prevent collision again (get out the ball)
 	//We dont need to prevent collision if there was no collision
 	if (collision != 0) {
-		//           +============+         /
-		//        ---|            |---     / <- ball's direction
-		//       -   |            |   -   /
-		//     ||----|------------|----||/
-		//     ||    |            |    |* <- new ball center
-		//     ||    |            |    /|
-		//     ||    |            |   /||
-		//     ||    |            |  / ||
-		//     ||    |   Player   | * <- current ball center
-		//     ||    |             /   ||
-		//     ||    |            /    ||
-		//     ||    |           /|    ||
-		//     ||    |          / |    ||
-		//     ||----|---------/--|----||
-		//       -   |        /   |   - <- rounded corners with radius of ball
-		//        ---|       /    |---
-		//           +======*=====+ <- ignore that intersection point
-		//                 /
+		//           +=========+
+		//        ---|         |---
+		//       - 5 |         | 6 -
+		//     ||----+    1    +----||
+		//     ||     \       /     ||
+		//     ||      \     /      ||
+		//     ||       \   /       ||
+		//     ||        \ /        ||
+		//     ||    4    *    2    ||
+		//     ||        / \        ||
+		//     ||       /   \       ||
+		//     ||      /     \      ||
+		//     ||     /       \     ||
+		//     ||----+    3    +----||
+		//       - 8 |         | 7 -
+		//        ---|         |---
+		//           +=========+
+		//Zones 1, 2, 3, 4 will place the ball near straight lines
+		//Zones 5, 6, 7, 8 will place the ball near rounded corners
+		//First, check the rounded corners
 
-		//Get the line's tangent
-		const float tangent = std::tan(ball_direction);
-
-		//Find the intersection points with rounded rectangle
-		std::vector<sf::Vector2f> intersection_points(2);
-		unsigned char tmp_points_amount;
-		switch (collision) {
-			case 1: //Player
-			case 2:
-			case 3:
-			case 4:
-			case 5: {
-				tmp_points_amount =
-					gm::rounded_rect_line_intersection(tangent, ball_pos, player_rect, ball_radius,
-													intersection_points[0], intersection_points[1]);
-			}
-			case 6: //Enemy
-			case 7:
-			case 8:
-			case 9:
-			case 10: {
-				tmp_points_amount =
-					gm::rounded_rect_line_intersection(tangent, ball_pos, enemy_rect, ball_radius,
-													intersection_points[0], intersection_points[1]);
-			}
-		}
-		//Possible that points amount equals to 0, so if it is, just skip other checks
-		if (tmp_points_amount > 0) {
-			intersection_points.resize(tmp_points_amount);
-
-			//We need only the front side of line (ray) and rear side, but with length that equals radius,
-			//so, filter the intersection points
-			for (unsigned char i = 0; i < intersection_points.size(); i++) {
-				//Get tangent sign of line that intersects ball center and current intersection point
-				bool tmp_tan_sign = ball_pos.y - intersection_points[i].y != intersection_points[i].x - ball_pos.x;
-
-				//If sign of tangents is not similar and distance is greater than radius, then
-				if ((std::signbit(tangent) == tmp_tan_sign/* ||
-					gm::distance(ball_pos, intersection_points[i]) < ball_radius*/))
-					intersection_points.erase(intersection_points.begin() + i); //Erase it
-			}
-
-			//If there is more than 1 element left, take the closest
-			sf::Vector2f new_position = intersection_points[0];
-			if (intersection_points.size() > 1) {
-				for (unsigned char i = 1; i < intersection_points.size(); i++) {
-					if (gm::distance(intersection_points[i], ball_pos) <
-						gm::distance(new_position, ball_pos))
-						new_position = intersection_points[i];
-				}
-			}
-
-			//Place ball in the ready position
-			ball_pos = new_position;
-		}
 	}
 	//END prevent collision again (get out the ball)
 
-	//Move ball in the specified direction
-	ball_pos += { -std::sin(ball_direction) * ball_speed, std::cos(ball_direction) * ball_speed };
+	ball_pos = next_ball_pos;
 }
 
 void Server::scored(bool is_player) {
@@ -376,4 +332,3 @@ void Server::scored(bool is_player) {
 
 	waiting_for_input = true; //Suspend
 }
-

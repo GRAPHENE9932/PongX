@@ -92,4 +92,11 @@ void GamePage::render() {
     window->draw(separator);
     player_score_text.render();
     enemy_score_text.render();
+
+	//Show direction
+	sf::VertexArray line(sf::LineStrip, 2);
+	line[0] = server->get_ball_pos();
+	line[1] = server->get_ball_pos() +
+		sf::Vector2f(std::sin(server->get_ball_dir()) * 5000, std::cos(server->get_ball_dir()) * 5000);
+	window->draw(line);
 }

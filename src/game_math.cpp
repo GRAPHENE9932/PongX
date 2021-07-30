@@ -30,13 +30,53 @@ float gm::distance(sf::Vector2f point_1, sf::Vector2f point_2) {
 		(point_1.y - point_2.y) * (point_1.y - point_2.y));
 }
 
+float gm::rect_distance(sf::FloatRect rect, sf::Vector2f point) {
+	float distance_x = std::max({rect.left - point.x, 0.0F, point.x - rect.left - rect.width});
+	float distance_y = std::max({rect.top - point.y, 0.0F, point.y - rect.top - rect.height});
+	return std::hypot(distance_x, distance_y);
+}
+
 void gm::move_rect(sf::FloatRect* rect, sf::Vector2f rel_pos) {
 	rect->left += rel_pos.x;
 	rect->top += rel_pos.y;
 }
 
+bool gm::is_between(float number, float number_1, float number_2) {
+	if (number_1 > number_2)
+		std::swap(number_1, number_2);
+
+	return number >= number_1 && number <= number_2;
+}
+
+bool gm::is_between_v2(sf::Vector2f point, sf::Vector2f point_1, sf::Vector2f point_2) {
+	return is_between(point.x, point_1.x, point_2.x) && is_between(point.y, point_1.y, point_2.y);
+}
+
+unsigned char gm::quadrant(sf::Vector2f center, sf::Vector2f point) {
+	sf::Vector2f local_point = point - center;
+	if (local_point.x >= 0 && local_point.y >= 0)
+		return 1;
+	if (local_point.x <= 0 && local_point.y >= 0)
+		return 2;
+	if (local_point.x <= 0 && local_point.y <= 0)
+		return 3;
+	if (local_point.x >= 0 && local_point.y <= 0)
+		return 4;
+	else
+		return 0;
+}
+
+bool gm::is_higher_semiplane(float line_tangent, sf::Vector2f line_point, sf::Vector2f point) {
+	//Compute the b variable (y=kx+b)
+	const float b = line_point.y - line_tangent * line_point.x;
+
+	//If specified point is higher than line point on the same Y, then it is on the higher semiplane
+	const float line_y = line_tangent + point.x + b; //y=kx+b
+	return line_y > point.y;
+}
+
 float gm::random_number(float min, float max) {
-	if (!randomizer_initialized) { //Initialize randomizer if it is not
+	if (!randomizer_initialized) { //Initialize randomizer if it is not initialized yet
 		std::random_device true_gen; //Get the true random number which used for seed
 		randomizer = std::mt19937(true_gen()); //Seed and initialize our randomizer
 	}
@@ -276,4 +316,54 @@ unsigned char gm::rounded_rect_line_intersection(float line_tangent, sf::Vector2
 		}
 	}
 	return intersection_points.size();
+}
+
+bool gm::rounded_rect_contains(sf::FloatRect base_rect, float radius, sf::Vector2f point) {
+	return rect_distance(base_rect, point) <= radius;
+}
+
+unsigned char gm::rounded_rect_segment_contains(sf::FloatRect base_rect, float radius, sf::Vector2f point) {
+	//           +=========+
+	//        ---|         |---
+	//       - 5 |         | 6 -
+	//     ||----+    1    +----||
+	//     ||     \       /     ||
+	//     ||      \     /      ||
+	//     ||       \   /       ||
+	//     ||        \ /        ||
+	//     ||    4    *    2    ||
+	//     ||        / \        ||
+	//     ||       /   \       ||
+	//     ||      /     \      ||
+	//     ||     /       \     ||
+	//     ||----+    3    +----||
+	//       - 8 |         | 7 -
+	//        ---|         |---
+	//           +=========+
+	//Check if our rounded rect overall contains point
+	//DO NOT REMOVE THIS PART! It is necessary for 1, 2, 3, 4
+	if (!rounded_rect_contains(base_rect, radius, point))
+		return 0;
+
+	//Check corners first
+	//5
+	if (distance({base_rect.left, base_rect.top}, point) <= radius &&
+		quadrant({base_rect.left, base_rect.top}, point) == 3) {
+		return 5;
+	}
+	//6
+	if (distance({base_rect.left + base_rect.width, base_rect.top}, point) <= radius &&
+		quadrant({base_rect.left + base_rect.width, base_rect.top}, point) == 4) {
+		return 6;
+	}
+	//7
+	if (distance({base_rect.left + base_rect.width, base_rect.top + base_rect.height}, point) <= radius &&
+		quadrant({base_rect.left + base_rect.width, base_rect.top + base_rect.height}, point) == 1) {
+		return 7;
+	}
+	//8
+	if (distance({base_rect.left, base_rect.top + base_rect.height}, point) <= radius &&
+		quadrant({base_rect.left, base_rect.top + base_rect.height}, point) == 2) {
+		return 8;
+	}
 }

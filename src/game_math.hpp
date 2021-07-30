@@ -27,8 +27,27 @@ namespace gm {
 	///Calculate distance between 2 points
 	float distance(sf::Vector2f point_1, sf::Vector2f point_2);
 
+	///Calculate distance between rect and point
+	float rect_distance(sf::FloatRect rect, sf::Vector2f point);
+
 	///Add current rect position to specified position
 	void move_rect(sf::FloatRect* rect, sf::Vector2f rel_pos);
+
+	///Check if given number is between specified 2 numbers
+	bool is_between(float number, float number_1, float number_2);
+
+	///Check if given point is between specified 2 points
+	///It is like create the rectangle from specified 2 points and check if given point
+	///intersects with this rectangle
+	bool is_between_v2(sf::Vector2f point, sf::Vector2f point_1, sf::Vector2f point_2);
+
+	///Get quadrant number of point where center is (0, 0) of coordinate plane
+	///@returns quadrant number (1 - bottom right, 2 - bottom left, 3 - top left, 4 - top right)
+	unsigned char quadrant(sf::Vector2f center, sf::Vector2f point);
+
+	///Which semiplane specified point line
+	///@return true if higher semiplane, false if not
+	bool is_higher_semiplane(float line_tangent, sf::Vector2f line_point, sf::Vector2f point);
 
 	///Generates a random number in range [min;max)
 	float random_number(float min, float max);
@@ -85,4 +104,12 @@ namespace gm {
 												 sf::FloatRect base_rect, float radius,
 												 sf::Vector2f& point_1, sf::Vector2f& point_2);
 
+	///Is rounded rect contains specified point?
+	bool rounded_rect_contains(sf::FloatRect base_rect, float radius, sf::Vector2f point);
+
+	///Discover rounded rect segment number which contains specified point
+	///@returns segment number (0 if point is outside the rounded rectangle)
+	///0 - no intersection, 1 - top, 2 - right, 3 - bottom, 4 - left,
+	///5 - left top corner, 6 - right top, 7 - right bottom, 8 - left bottom
+	unsigned char rounded_rect_segment_contains(sf::FloatRect base_rect, float radius, sf::Vector2f point);
 }

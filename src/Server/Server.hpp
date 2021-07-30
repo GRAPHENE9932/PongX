@@ -41,6 +41,8 @@ public:
 	sf::FloatRect get_enemy_rect();
 	///Get the current position of the ball
 	sf::Vector2f get_ball_pos();
+	///Get the current direction of the ball in radians
+	float get_ball_dir();
     ///Get current player's score
     unsigned int get_player_score();
     ///Get current enemy's score
@@ -60,6 +62,8 @@ protected:
 	GameType server_type;
 
 	sf::Vector2f ball_pos;
+	///Ball position in the next frame
+	sf::Vector2f next_ball_pos;
 	///Ball's radius in pixels
 	float ball_radius;
 	///Ball's direction in radians
