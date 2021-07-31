@@ -66,13 +66,20 @@ unsigned char gm::quadrant(sf::Vector2f center, sf::Vector2f point) {
 		return 0;
 }
 
-bool gm::is_higher_semiplane(float line_tangent, sf::Vector2f line_point, sf::Vector2f point) {
-	//Compute the b variable (y=kx+b)
-	const float b = line_point.y - line_tangent * line_point.x;
-
+bool gm::is_higher_semiplane(float line_tangent, float line_b, sf::Vector2f point) {
 	//If specified point is higher than line point on the same Y, then it is on the higher semiplane
-	const float line_y = line_tangent + point.x + b; //y=kx+b
+	const float line_y = line_tangent + point.x + line_b; //y=kx+b
 	return line_y > point.y;
+}
+
+float gm::line_b_from_point(float line_tangent, sf::Vector2f line_point) {
+	return line_point.y - line_tangent * line_point.x;
+}
+
+float gm::line_tangent_from_points(sf::Vector2f point_1, sf::Vector2f point_2) {
+	float delta_x = point_2.x - point_1.x;
+	float delta_y = point_2.y - point_1.y;
+	return delta_y / delta_x;
 }
 
 float gm::random_number(float min, float max) {
@@ -97,7 +104,7 @@ float gm::random_number_double_range(const float min_1, const float max_1,
 		return min_2 + raw_random - (max_1 - min_1);
 }
 
-bool gm::ver_segment_line_intersection(float line_tangent, sf::Vector2f line_point,
+bool gm::ver_segment_line_intersection(float line_tangent, float line_b,
 									   float line_seg_y_1, float line_seg_y_2,
 									   float line_seg_x, sf::Vector2f& intersection_point) {
 	//          ---
@@ -113,11 +120,8 @@ bool gm::ver_segment_line_intersection(float line_tangent, sf::Vector2f line_poi
 	if (line_seg_y_1 > line_seg_y_2)
 		std::swap(line_seg_y_1, line_seg_y_2);
 
-	//Compute the b variable (y=kx+b)
-	const float b = line_point.y - line_tangent * line_point.x;
-
 	//Compute the intersection point of the lines, ignoring that there is line segment, but not the line
-	const float raw_intersection_y = line_tangent * line_seg_x + b;
+	const float raw_intersection_y = line_tangent * line_seg_x + line_b;
 
 	//Consider that there is line segment
 	if (raw_intersection_y < line_seg_y_1 || raw_intersection_y > line_seg_y_2)
@@ -128,7 +132,7 @@ bool gm::ver_segment_line_intersection(float line_tangent, sf::Vector2f line_poi
 	return true;
 }
 
-bool gm::hor_segment_line_intersection(float line_tangent, sf::Vector2f line_point,
+bool gm::hor_segment_line_intersection(float line_tangent, float line_b,
 									   float line_seg_x_1, float line_seg_x_2,
 									   float line_seg_y, sf::Vector2f& intersection_point) {
 	//                /
@@ -141,11 +145,8 @@ bool gm::hor_segment_line_intersection(float line_tangent, sf::Vector2f line_poi
 	if (line_seg_x_1 > line_seg_x_2)
 		std::swap(line_seg_x_1, line_seg_x_2);
 
-	//Compute the b variable (y=kx+b)
-	const float b = line_point.y - line_tangent * line_point.x;
-
 	//Compute the intersection point of the lines, ignoring that there is line segment, but not the line
-	const float raw_intersection_x = (line_seg_y - b) / line_tangent;
+	const float raw_intersection_x = (line_seg_y - line_b) / line_tangent;
 
 	//Consider that there is line segment
 	if (raw_intersection_x < line_seg_x_1 || raw_intersection_x > line_seg_x_2)
@@ -157,30 +158,28 @@ bool gm::hor_segment_line_intersection(float line_tangent, sf::Vector2f line_poi
 }
 
 unsigned char gm::circle_line_intersection(sf::Vector2f circle_pos, float radius, float line_tangent,
-										   sf::Vector2f line_point,
+										   float line_b,
 										   sf::Vector2f& point_1, sf::Vector2f& point_2) {
-	//Compute the b (d) variable (y=kx+b)
-	const float d = line_point.y - line_tangent * line_point.x;
-
 	//Compute the t (temp) variable
 	const float t = radius * radius * (1 + line_tangent * line_tangent) -
-		(circle_pos.y - line_tangent * circle_pos.x - d) * (circle_pos.y - line_tangent * circle_pos.x - d);
+		(circle_pos.y - line_tangent * circle_pos.x - line_b) *
+		(circle_pos.y - line_tangent * circle_pos.x - line_b);
 
 	if (t < 0) //We will have to take the square root of t
 		return 0; //So, here is no intersection
 
 	//By formula
-	point_1.x = (circle_pos.x + circle_pos.y * line_tangent - d * line_tangent + std::sqrt(t)) /
+	point_1.x = (circle_pos.x + circle_pos.y * line_tangent - line_b * line_tangent + std::sqrt(t)) /
 		(1 + line_tangent * line_tangent);
 
-	point_2.x = (circle_pos.x + circle_pos.y * line_tangent - d * line_tangent - std::sqrt(t)) /
+	point_2.x = (circle_pos.x + circle_pos.y * line_tangent - line_b * line_tangent - std::sqrt(t)) /
 		(1 + line_tangent * line_tangent);
 
-	point_1.y = (d + circle_pos.x * line_tangent + circle_pos.y * line_tangent * line_tangent +
+	point_1.y = (line_b + circle_pos.x * line_tangent + circle_pos.y * line_tangent * line_tangent +
 		line_tangent * std::sqrt(t)) /
 		(1 + line_tangent * line_tangent);
 
-	point_2.y = (d + circle_pos.x * line_tangent + circle_pos.y * line_tangent * line_tangent -
+	point_2.y = (line_b + circle_pos.x * line_tangent + circle_pos.y * line_tangent * line_tangent -
 		line_tangent * std::sqrt(t)) /
 		(1 + line_tangent * line_tangent);
 
@@ -191,7 +190,7 @@ unsigned char gm::circle_line_intersection(sf::Vector2f circle_pos, float radius
 	return 2;
 }
 
-unsigned char gm::rounded_rect_line_intersection(float line_tangent, sf::Vector2f line_point,
+unsigned char gm::rounded_rect_line_intersection(float line_tangent, float line_b,
 												 sf::FloatRect base_rect, float radius,
 												 sf::Vector2f& point_1, sf::Vector2f& point_2) {
 	//           +===================+
@@ -215,25 +214,25 @@ unsigned char gm::rounded_rect_line_intersection(float line_tangent, sf::Vector2
 	sf::Vector2f tmp_points[2];
 	//Handle the straigh sides (1, 2, 3, 4)
 	//1
-	if (hor_segment_line_intersection(line_tangent, line_point, base_rect.left,
+	if (hor_segment_line_intersection(line_tangent, line_b, base_rect.left,
 									  base_rect.left + base_rect.width, base_rect.top - radius,
 									  tmp_points[0])) {
 		intersection_points.push_back(tmp_points[0]);
 	}
 	//2
-	if (ver_segment_line_intersection(line_tangent, line_point, base_rect.top,
+	if (ver_segment_line_intersection(line_tangent, line_b, base_rect.top,
 		base_rect.top + base_rect.height, base_rect.left + base_rect.width + radius,
 									  tmp_points[0])) {
 		intersection_points.push_back(tmp_points[0]);
 	}
 	//3
-	if (hor_segment_line_intersection(line_tangent, line_point, base_rect.left,
+	if (hor_segment_line_intersection(line_tangent, line_b, base_rect.left,
 		base_rect.left + base_rect.width, base_rect.top + base_rect.height + radius,
 									  tmp_points[0])) {
 		intersection_points.push_back(tmp_points[0]);
 	}
 	//4
-	if (ver_segment_line_intersection(line_tangent, line_point, base_rect.top,
+	if (ver_segment_line_intersection(line_tangent, line_b, base_rect.top,
 		base_rect.top + base_rect.height, base_rect.left - radius,
 									  tmp_points[0])) {
 		intersection_points.push_back(tmp_points[0]);
@@ -243,7 +242,7 @@ unsigned char gm::rounded_rect_line_intersection(float line_tangent, sf::Vector2
 	unsigned char tmp_amount;
 	sf::Vector2f tmp_center = {base_rect.left, base_rect.top};
 	//5
-	tmp_amount = circle_line_intersection(tmp_center, radius, line_tangent, line_point,
+	tmp_amount = circle_line_intersection(tmp_center, radius, line_tangent, line_b,
 										  tmp_points[0], tmp_points[1]);
 	switch (tmp_amount) {
 		case 2: {
@@ -259,7 +258,7 @@ unsigned char gm::rounded_rect_line_intersection(float line_tangent, sf::Vector2
 	//6
 	tmp_center = {base_rect.left + base_rect.left, base_rect.top};
 	tmp_amount = circle_line_intersection(tmp_center, radius,
-										  line_tangent, line_point,
+										  line_tangent, line_b,
 										  tmp_points[0], tmp_points[1]);
 	switch (tmp_amount) {
 		case 2: {
@@ -275,7 +274,7 @@ unsigned char gm::rounded_rect_line_intersection(float line_tangent, sf::Vector2
 	//7
 	tmp_center = {base_rect.left + base_rect.width, base_rect.top + base_rect.height};
 	tmp_amount = circle_line_intersection(tmp_center,
-										  radius, line_tangent, line_point,
+										  radius, line_tangent, line_b,
 										  tmp_points[0], tmp_points[1]);
 	switch (tmp_amount) {
 		case 2: {
@@ -291,7 +290,7 @@ unsigned char gm::rounded_rect_line_intersection(float line_tangent, sf::Vector2
 	//8
 	tmp_center = {base_rect.left, base_rect.top + base_rect.height};
 	tmp_amount = circle_line_intersection({base_rect.left, base_rect.top + base_rect.height},
-										  radius, line_tangent, line_point,
+										  radius, line_tangent, line_b,
 										  tmp_points[0], tmp_points[1]);
 	switch (tmp_amount) {
 		case 2: {
@@ -323,29 +322,29 @@ bool gm::rounded_rect_contains(sf::FloatRect base_rect, float radius, sf::Vector
 }
 
 unsigned char gm::rounded_rect_segment_contains(sf::FloatRect base_rect, float radius, sf::Vector2f point) {
-	//           +=========+
-	//        ---|         |---
-	//       - 5 |         | 6 -
-	//     ||----+    1    +----||
-	//     ||     \       /     ||
-	//     ||      \     /      ||
-	//     ||       \   /       ||
-	//     ||        \ /        ||
-	//     ||    4    *    2    ||
-	//     ||        / \        ||
-	//     ||       /   \       ||
-	//     ||      /     \      ||
-	//     ||     /       \     ||
-	//     ||----+    3    +----||
-	//       - 8 |         | 7 -
-	//        ---|         |---
-	//           +=========+
+	//           +=========+           +=================+
+	//        ---|         |---        ||\             /||
+	//       - 5 |         | 6 -       || \           / ||
+	//     ||----+    1    +----||     ||  \   11    /  ||
+	//     ||     \       /     ||     ||   \       / <- Second diagonal
+	//     ||      \     /      ||     ||    \     /    ||
+	//     ||       \   /       ||     ||     \   /     ||
+	//     ||        \ /        ||     ||      \ /      ||
+	//     ||    4    *    2    ||     ||  01   *   10  ||
+	//     ||        / \        ||     ||      / \      ||
+	//     ||       /   \       ||     ||     /   \     ||
+	//     ||      /     \      ||     ||    /     \    ||
+	//     ||     /       \     ||     ||   /       \ <- First diagonal
+	//     ||----+    3    +----||     ||  /   00    \  ||
+	//       - 8 |         | 7 -       || /           \ ||
+	//        ---|         |---        ||/             \||
+	//           +=========+           +=================+
 	//Check if our rounded rect overall contains point
 	//DO NOT REMOVE THIS PART! It is necessary for 1, 2, 3, 4
 	if (!rounded_rect_contains(base_rect, radius, point))
 		return 0;
 
-	//Check corners first
+	//Check corners first (5, 6, 7, 8)
 	//5
 	if (distance({base_rect.left, base_rect.top}, point) <= radius &&
 		quadrant({base_rect.left, base_rect.top}, point) == 3) {
@@ -366,4 +365,25 @@ unsigned char gm::rounded_rect_segment_contains(sf::FloatRect base_rect, float r
 		quadrant({base_rect.left, base_rect.top + base_rect.height}, point) == 2) {
 		return 8;
 	}
+
+	//Check diagonal segments (1, 2, 3, 4)
+	//Compute line equation parameters for diagonals
+	float tangent_1 = line_tangent_from_points({base_rect.left, base_rect.top},
+											   {base_rect.left + base_rect.width, base_rect.top + base_rect.height});
+	float tangent_2 = line_tangent_from_points({base_rect.left + base_rect.width, base_rect.top},
+											   {base_rect.left, base_rect.top + base_rect.height});
+	float b_1 = line_b_from_point(tangent_1, {base_rect.left, base_rect.top});
+	float b_2 = line_b_from_point(tangent_2, {base_rect.left, base_rect.top + base_rect.height});
+	//Check if our point is higher than every diagonal
+	bool higher_1 = is_higher_semiplane(tangent_1, b_1, point);
+	bool higher_2 = is_higher_semiplane(tangent_2, b_2, point);
+	//Do conclusions
+	if (higher_1 && higher_2)
+		return 1;
+	else if (!higher_1 && higher_2)
+		return 4;
+	else if (higher_1 && !higher_2)
+		return 2;
+	else
+		return 3;
 }

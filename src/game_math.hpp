@@ -47,7 +47,13 @@ namespace gm {
 
 	///Which semiplane specified point line
 	///@return true if higher semiplane, false if not
-	bool is_higher_semiplane(float line_tangent, sf::Vector2f line_point, sf::Vector2f point);
+	bool is_higher_semiplane(float line_tangent, float line_b, sf::Vector2f point);
+
+	///Compute b variable (in equation y=kx+b) from tangent (k) and random point that lies on line
+	float line_b_from_point(float line_tangent, sf::Vector2f line_point);
+
+	///Compute tangent of line (k in equation y=kx+b) from 2 random points that lies on that line
+	float line_tangent_from_points(sf::Vector2f point_1, sf::Vector2f point_2);
 
 	///Generates a random number in range [min;max)
 	float random_number(float min, float max);
@@ -64,7 +70,7 @@ namespace gm {
 	///@param line_seg_x X coordinate of the vertical line segment
 	///@param intersection_point the result: intersection point (reference)
 	///@returns does vertical line segment intersects with line?
-	bool ver_segment_line_intersection(float line_tangent, sf::Vector2f line_point,
+	bool ver_segment_line_intersection(float line_tangent, float line_b,
 									   float line_seg_y_1, float line_seg_y_2,
 									   float line_seg_x, sf::Vector2f& intersection_point);
 
@@ -76,7 +82,7 @@ namespace gm {
 	///@param line_seg_y Y coordinate of the horizontal line segment
 	///@param intersection_point the result: intersection point (reference)
 	///@returns does horizontal line segment intersects with line?
-	bool hor_segment_line_intersection(float line_tangent, sf::Vector2f line_point,
+	bool hor_segment_line_intersection(float line_tangent, float line_b,
 									   float line_seg_x_1, float line_seg_x_2,
 									   float line_seg_y, sf::Vector2f& intersection_point);
 
@@ -89,7 +95,7 @@ namespace gm {
 	///@param point_2 second intersection point (reference)
 	///@returns amount of intersection points
 	unsigned char circle_line_intersection(sf::Vector2f circle_pos, float radius, float line_tangent,
-										   sf::Vector2f line_point,
+										   float line_b,
 										   sf::Vector2f& point_1, sf::Vector2f& point_2);
 
 	///Compute the intersection points of specified rounded rectangle and line
@@ -100,7 +106,7 @@ namespace gm {
 	///@param point_1 first intersection point (reference)
 	///@param point_2 second intersection point (reference)
 	///@returns amount of intersection points
-	unsigned char rounded_rect_line_intersection(float line_tangent, sf::Vector2f line_point,
+	unsigned char rounded_rect_line_intersection(float line_tangent, float line_b,
 												 sf::FloatRect base_rect, float radius,
 												 sf::Vector2f& point_1, sf::Vector2f& point_2);
 
