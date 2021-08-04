@@ -62,8 +62,6 @@ protected:
 	GameType server_type;
 
 	sf::Vector2f ball_pos;
-	///Ball position in the next frame
-	sf::Vector2f next_ball_pos;
 	///Ball's radius in pixels
 	float ball_radius;
 	///Ball's direction in radians

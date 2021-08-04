@@ -128,15 +128,15 @@ void Server::update_ball_movement() {
 	auto old_direction = ball_direction;
 
 	//Predict the next ball position (ignoring everything, but speed and direction)
-	next_ball_pos = ball_pos +
+	ball_pos +=
 		sf::Vector2f(std::sin(old_direction) * ball_speed, std::cos(old_direction) * ball_speed);
 
 	//BEGIN check collision of next ball with bounds of window
-	bool top_win_bound = next_ball_pos.y - ball_radius <= 0; //Top global bound
-	bool bottom_win_bound = next_ball_pos.y + ball_radius >= window_size.y; //Bottom global bound
+	bool top_win_bound = ball_pos.y - ball_radius <= 0; //Top global bound
+	bool bottom_win_bound = ball_pos.y + ball_radius >= window_size.y; //Bottom global bound
 
 	//Clamp the position of the ball
-	std::clamp(next_ball_pos.y, ball_radius, window_size.y - ball_radius);
+	std::clamp(ball_pos.y, ball_radius, window_size.y - ball_radius);
 
 	//Change the direction of the ball considering the collisions with horizontal window bounds
 	if (top_win_bound || bottom_win_bound) {
@@ -147,105 +147,51 @@ void Server::update_ball_movement() {
 		ball_direction = 180.0F * DEG2RAD - ball_direction;
 	}
 	//END check collision with bounds of window
+	//We will use "rounded rect - point" model, because it is identical but simplier than "rect - circle"
+	//           +=========+
+	//        ---|         |---
+	//       - 5 |         | 6 -
+	//     ||----+    1    +----||
+	//     ||     \       /     ||
+	//     ||      \     /      || 0 if no collision
+	//     ||       \   /       ||
+	//     ||        \ /        ||
+	//     ||    4    *    2    ||  <- Player (enemy)
+	//     ||        / \        ||
+	//     ||       /   \       ||
+	//     ||      /     \      ||
+	//     ||     /       \     ||
+	//     ||----+    3    +----||
+	//       - 8 |         | 7 -
+	//        ---|         |---
+	//           +=========+
+	unsigned char collision = 0;
+	sf::FloatRect* cur_rect = nullptr;
 
-	//  |          |                         |          |
-	//  |     2    |   4                  9  |     7    |
-	//  |          |                         |          |
-	//  +==========+------             ------+==========+
-	//            ||                         ||
-	//            ||                         ||
-	//            ||                         ||
-	//            ||                         ||
-	//            ||                         ||
-	//   Player   ||   1      if no       6  ||  Enemy
-	//            ||        collision        ||
-	//            ||            0            ||
-	//            ||                         ||
-	//            ||                         ||
-	//            ||                         ||
-	//  +==========+------             ------+==========+
-	//  |          |                         |          |
-	//  |     3    |   5                 10  |     8    |
-	//  |          |                         |          |
-	//BEGIN check collision with the player and the enemy
-	//Check horizontal surfaces, vertical surfaces and corners separately
-	unsigned char collision = 0; //See scheme above
+	//Check collision with player and enemy
+	if (gm::rounded_rect_contains(player_rect, ball_radius, ball_pos))
+		cur_rect = &player_rect;
+	else if (gm::rounded_rect_contains(enemy_rect, ball_radius, ball_pos))
+		cur_rect = &enemy_rect;
 
-	//CORNERS
-	//4
-	if (gm::distance({ player_rect.left + player_rect.width, player_rect.top },
-		next_ball_pos) <= ball_radius &&
-		next_ball_pos.x >= player_rect.left + player_rect.width &&
-		next_ball_pos.y <= player_rect.top) {
-		collision = 4;
-	}
-	//5
-	else if (gm::distance({ player_rect.left + player_rect.width, player_rect.top + player_rect.height },
-		next_ball_pos) <= ball_radius &&
-		next_ball_pos.x >= player_rect.left + player_rect.width &&
-		next_ball_pos.y >= player_rect.top + player_rect.height) {
-		collision = 5;
-	}
-	//9
-	else if (gm::distance({ enemy_rect.left, enemy_rect.top }, next_ball_pos) <= ball_radius &&
-		next_ball_pos.x <= enemy_rect.left &&
-		next_ball_pos.y <= enemy_rect.top) {
-		collision = 9;
-	}
-	//10
-	else if (gm::distance({ enemy_rect.left, enemy_rect.top + enemy_rect.height },
-		next_ball_pos) <= ball_radius &&
-		next_ball_pos.x <= enemy_rect.left &&
-		next_ball_pos.y >= enemy_rect.top + enemy_rect.height) {
-		collision = 10;
-	}
-	//VERTICAL SURFACES
-	//1
-	if (next_ball_pos.x - ball_radius <= player_rect.left + player_rect.width &&
-		next_ball_pos.y >= player_rect.top &&
-		next_ball_pos.y <= player_rect.top + player_rect.height) {
-		collision = 1;
-	}
-	//6
-	else if (next_ball_pos.x + ball_radius >= enemy_rect.left &&
-		next_ball_pos.y >= enemy_rect.top &&
-		next_ball_pos.y <= enemy_rect.top + enemy_rect.height) {
-		collision = 6;
-	}
-	//HORIZONTAL SURFACES
-	//2
-	else if (next_ball_pos.y + ball_radius >= player_rect.top &&
-		next_ball_pos.y <= player_rect.top + player_rect.height * 0.5F &&
-		next_ball_pos.x >= player_rect.left &&
-		next_ball_pos.x <= player_rect.left + player_rect.width) {
-		collision = 2;
-	}
-	//3
-	else if (next_ball_pos.y - ball_radius <= player_rect.top + player_rect.height &&
-		next_ball_pos.y >= player_rect.top + player_rect.height * 0.5F &&
-		next_ball_pos.x >= player_rect.left &&
-		next_ball_pos.x <= player_rect.left + player_rect.width) {
-		collision = 3;
-	}
-	//7
-	else if (next_ball_pos.y + ball_radius >= enemy_rect.top &&
-		next_ball_pos.y <= enemy_rect.top + enemy_rect.height * 0.5F &&
-		next_ball_pos.x >= enemy_rect.left &&
-		next_ball_pos.x <= enemy_rect.left + enemy_rect.width) {
-		collision = 7;
-	}
-	//8
-	else if (next_ball_pos.y - ball_radius <= enemy_rect.top + enemy_rect.height &&
-		next_ball_pos.y >= enemy_rect.top + enemy_rect.height * 0.5F &&
-		next_ball_pos.x >= enemy_rect.left &&
-		next_ball_pos.x <= enemy_rect.left + enemy_rect.width) {
-		collision = 8;
-	}
+	//If here was a collision, check in which segment
+	if (cur_rect != nullptr)
+		collision = gm::rounded_rect_segment_contains(*cur_rect, ball_radius, ball_pos);
 
 	if (!collided_before) {
+		//Also, change the direction of the ball
 		switch (collision) {
-			case 1: //Vertical surfaces
-			case 6: {
+			case 1:
+			case 3: { //Horizontal surfaces
+				// +================o==================+
+				// |               /|\                 |
+				// |    Before -> / | \ <- After       |
+				// |             /  |  \               |
+				ball_direction = 180.0F * DEG2RAD - ball_direction;
+				break;
+			}
+			case 2:
+			case 4: { //Vertical surfaces
 				//                           \  ||
 				//                  Before -> \ ||
 				//                             \||
@@ -256,21 +202,10 @@ void Server::update_ball_movement() {
 				ball_direction = 360.0F * DEG2RAD - ball_direction;
 				break;
 			}
-			case 2: //Horizontal surfaces
-			case 3:
-			case 7:
-			case 8: {
-				// +================o==================+
-				// |               /|\                 |
-				// |    Before -> / | \ <- After       |
-				// |             /  |  \               |
-				ball_direction = 180.0F * DEG2RAD - ball_direction;
-				break;
-			}
-			case 4: //Corners
 			case 5:
-			case 9:
-			case 10: {
+			case 6:
+			case 7:
+			case 8: { //Corners
 				//                             ||
 				//                             ||
 				//                             o=====
@@ -285,92 +220,67 @@ void Server::update_ball_movement() {
 		}
 	}
 
-	//Set value to variable "collided_before"
-	collided_before = collision != 0;
-	//END check collision with the player and the enemy
-
 	//BEGIN prevent collision again (get out the ball)
-	//We don't need to prevent new collision if there was no collision
-	if (collision != 0) {
-		//The rectangle pointer we are currently working with
-		sf::FloatRect* cur_rect;
-		switch (collision) {
-			case 1:
-			case 2:
-			case 3:
-			case 4:
-			case 5: {
-				cur_rect = &player_rect;
-				break;
-			}
-			default: {
-				cur_rect = &enemy_rect;
-			}
+	//Move the ball out the player (or enemy) depending on segment of player (or enemy)
+	switch (collision) {
+		case 1: { //Top side
+			ball_pos.y = cur_rect->top - ball_radius;
+			break;
 		}
-
-		//Compute in which segment of player (or enemy) ball lies
-		unsigned char segment = gm::rounded_rect_segment_contains(*cur_rect, ball_radius, ball_pos);
-
-		//Move the ball out the player (or enemy) depending on segment of player (or enemy)
-		switch (segment) {
-			case 1: { //Top side
-				ball_pos.y = cur_rect->top - ball_radius;
-				break;
-			}
-			case 2: { //Right side
-				ball_pos.x = cur_rect->left + cur_rect->width + ball_radius;
-				break;
-			}
-			case 3: { //Bottom side
-				ball_pos.y = cur_rect->top + cur_rect->height + ball_radius;
-				break;
-			}
-			case 4: { //Left side
-				ball_pos.x = cur_rect->left - ball_radius;
-				break;
-			}
-			case 5:
-			case 6:
-			case 7:
-			case 8: { //Rounded corners
-				//Find out current center of current rounded corner circle
-				sf::Vector2f circle_center;
-				switch (segment) {
-					case 5: {
-						circle_center = {cur_rect->left, cur_rect->top};
-						break;
-					}
-					case 6: {
-						circle_center = {cur_rect->left + cur_rect->width, cur_rect->top};
-						break;
-					}
-					case 7: {
-						circle_center = {cur_rect->left + cur_rect->width, cur_rect->top + cur_rect->height};
-						break;
-					}
-					case 8: {
-						circle_center = {cur_rect->left, cur_rect->top + cur_rect->height};
-						break;
-					}
+		case 2: { //Right side
+			ball_pos.x = cur_rect->left + cur_rect->width + ball_radius;
+			break;
+		}
+		case 3: { //Bottom side
+			ball_pos.y = cur_rect->top + cur_rect->height + ball_radius;
+			break;
+		}
+		case 4: { //Left side
+			ball_pos.x = cur_rect->left - ball_radius;
+			break;
+		}
+		case 5:
+		case 6:
+		case 7:
+		case 8: { //Rounded corners
+			//Find out current center of current rounded corner circle
+			sf::Vector2f circle_center;
+			switch (collision) {
+				case 5: {
+					circle_center = {cur_rect->left, cur_rect->top};
+					break;
 				}
-				//     -----/ <- Intersection point we have to find out
-				//   --    * <- Ball
-				//  -     /    -
-				// |     * <- Center of the circle
-				//  -          -
-				//   --      --
-				//     ------
-				//Compute angle of line
-				float angle = gm::line_angle_from_points(circle_center, ball_pos);
-				//Place ball in the correct place
-				ball_pos.x = std::cos(angle) * ball_radius;
-				ball_pos.y = std::sin(angle) * ball_radius;
+				case 6: {
+					circle_center = {cur_rect->left + cur_rect->width, cur_rect->top};
+					break;
+				}
+				case 7: {
+					circle_center = {cur_rect->left + cur_rect->width, cur_rect->top + cur_rect->height};
+					break;
+				}
+				case 8: {
+					circle_center = {cur_rect->left, cur_rect->top + cur_rect->height};
+					break;
+				}
 			}
+			//     -----/ <- Intersection point we have to find out
+			//   --    * <- Ball
+			//  -     /    -
+			// |     * <- Center of the circle
+			//  -          -
+			//   --      --
+			//     ------
+			//Compute angle of line
+			float angle = gm::line_angle_from_points(circle_center, ball_pos);
+			//Place ball in the correct place
+			ball_pos.x = circle_center.x + std::cos(angle) * ball_radius;
+			ball_pos.y = circle_center.y + std::sin(angle) * ball_radius;
 		}
 	}
 	//END prevent collision again (get out the ball)
 
-	ball_pos = next_ball_pos;
+	//Set value to variable "collided_before"
+	collided_before = collision != 0;
 }
 
 void Server::scored(bool is_player) {

@@ -331,17 +331,17 @@ unsigned char gm::rounded_rect_segment_contains(sf::FloatRect base_rect, float r
 	//           +=========+           +=================+
 	//        ---|         |---        ||\             /||
 	//       - 5 |         | 6 -       || \           / ||
-	//     ||----+    1    +----||     ||  \   11    /  ||
+	//     ||----+    1    +----||     ||  \   00    /  ||
 	//     ||     \       /     ||     ||   \       / <- Second diagonal
 	//     ||      \     /      ||     ||    \     /    ||
 	//     ||       \   /       ||     ||     \   /     ||
 	//     ||        \ /        ||     ||      \ /      ||
-	//     ||    4    *    2    ||     ||  01   *   10  ||
+	//     ||    4    *    2    ||     ||  10   *   01  ||
 	//     ||        / \        ||     ||      / \      ||
 	//     ||       /   \       ||     ||     /   \     ||
 	//     ||      /     \      ||     ||    /     \    ||
 	//     ||     /       \     ||     ||   /       \ <- First diagonal
-	//     ||----+    3    +----||     ||  /   00    \  ||
+	//     ||----+    3    +----||     ||  /   11    \  ||
 	//       - 8 |         | 7 -       || /           \ ||
 	//        ---|         |---        ||/             \||
 	//           +=========+           +=================+
@@ -375,20 +375,21 @@ unsigned char gm::rounded_rect_segment_contains(sf::FloatRect base_rect, float r
 	//Check diagonal segments (1, 2, 3, 4)
 	//Compute line equation parameters for diagonals
 	float k_1 = line_k_from_points({base_rect.left, base_rect.top},
-											   {base_rect.left + base_rect.width, base_rect.top + base_rect.height});
+								   {base_rect.left + base_rect.width, base_rect.top + base_rect.height});
 	float k_2 = line_k_from_points({base_rect.left + base_rect.width, base_rect.top},
-											   {base_rect.left, base_rect.top + base_rect.height});
+								   {base_rect.left, base_rect.top + base_rect.height});
 	float b_1 = line_b_from_point(k_1, {base_rect.left, base_rect.top});
 	float b_2 = line_b_from_point(k_2, {base_rect.left, base_rect.top + base_rect.height});
 	//Check if our point is higher than every diagonal
 	bool higher_1 = is_higher_semiplane(k_1, b_1, point);
 	bool higher_2 = is_higher_semiplane(k_2, b_2, point);
-	//Do conclusions
-	if (higher_1 && higher_2)
+	//Do conclusions (consider that higher means greater Y,
+	//but we have inverted Y, so higher actually means lower)
+	if (!higher_1 && !higher_2)
 		return 1;
-	else if (!higher_1 && higher_2)
-		return 4;
 	else if (higher_1 && !higher_2)
+		return 4;
+	else if (!higher_1 && higher_2)
 		return 2;
 	else
 		return 3;
