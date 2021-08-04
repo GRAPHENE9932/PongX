@@ -55,6 +55,9 @@ namespace gm {
 	///Compute k of line (in equation y=kx+b) from 2 random points that lies on that line
 	float line_k_from_points(sf::Vector2f point_1, sf::Vector2f point_2);
 
+	///Compute angle between 0 rad and line from points that lying on it
+	float line_angle_from_points(sf::Vector2f point_1, sf::Vector2f point_2);
+
 	///Generates a random number in range [min;max)
 	float random_number(float min, float max);
 

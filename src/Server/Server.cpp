@@ -290,29 +290,83 @@ void Server::update_ball_movement() {
 	//END check collision with the player and the enemy
 
 	//BEGIN prevent collision again (get out the ball)
-	//We dont need to prevent collision if there was no collision
+	//We don't need to prevent new collision if there was no collision
 	if (collision != 0) {
-		//           +=========+
-		//        ---|         |---
-		//       - 5 |         | 6 -
-		//     ||----+    1    +----||
-		//     ||     \       /     ||
-		//     ||      \     /      ||
-		//     ||       \   /       ||
-		//     ||        \ /        ||
-		//     ||    4    *    2    ||
-		//     ||        / \        ||
-		//     ||       /   \       ||
-		//     ||      /     \      ||
-		//     ||     /       \     ||
-		//     ||----+    3    +----||
-		//       - 8 |         | 7 -
-		//        ---|         |---
-		//           +=========+
-		//Zones 1, 2, 3, 4 will place the ball near straight lines
-		//Zones 5, 6, 7, 8 will place the ball near rounded corners
-		//First, check the rounded corners
+		//The rectangle pointer we are currently working with
+		sf::FloatRect* cur_rect;
+		switch (collision) {
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			case 5: {
+				cur_rect = &player_rect;
+				break;
+			}
+			default: {
+				cur_rect = &enemy_rect;
+			}
+		}
 
+		//Compute in which segment of player (or enemy) ball lies
+		unsigned char segment = gm::rounded_rect_segment_contains(*cur_rect, ball_radius, ball_pos);
+
+		//Move the ball out the player (or enemy) depending on segment of player (or enemy)
+		switch (segment) {
+			case 1: { //Top side
+				ball_pos.y = cur_rect->top - ball_radius;
+				break;
+			}
+			case 2: { //Right side
+				ball_pos.x = cur_rect->left + cur_rect->width + ball_radius;
+				break;
+			}
+			case 3: { //Bottom side
+				ball_pos.y = cur_rect->top + cur_rect->height + ball_radius;
+				break;
+			}
+			case 4: { //Left side
+				ball_pos.x = cur_rect->left - ball_radius;
+				break;
+			}
+			case 5:
+			case 6:
+			case 7:
+			case 8: { //Rounded corners
+				//Find out current center of current rounded corner circle
+				sf::Vector2f circle_center;
+				switch (segment) {
+					case 5: {
+						circle_center = {cur_rect->left, cur_rect->top};
+						break;
+					}
+					case 6: {
+						circle_center = {cur_rect->left + cur_rect->width, cur_rect->top};
+						break;
+					}
+					case 7: {
+						circle_center = {cur_rect->left + cur_rect->width, cur_rect->top + cur_rect->height};
+						break;
+					}
+					case 8: {
+						circle_center = {cur_rect->left, cur_rect->top + cur_rect->height};
+						break;
+					}
+				}
+				//     -----/ <- Intersection point we have to find out
+				//   --    * <- Ball
+				//  -     /    -
+				// |     * <- Center of the circle
+				//  -          -
+				//   --      --
+				//     ------
+				//Compute angle of line
+				float angle = gm::line_angle_from_points(circle_center, ball_pos);
+				//Place ball in the correct place
+				ball_pos.x = std::cos(angle) * ball_radius;
+				ball_pos.y = std::sin(angle) * ball_radius;
+			}
+		}
 	}
 	//END prevent collision again (get out the ball)
 

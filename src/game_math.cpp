@@ -68,8 +68,8 @@ unsigned char gm::quadrant(sf::Vector2f center, sf::Vector2f point) {
 
 bool gm::is_higher_semiplane(float line_k, float line_b, sf::Vector2f point) {
 	//If specified point is higher than line point on the same Y, then it is on the higher semiplane
-	const float line_y = line_k + point.x + line_b; //y=kx+b
-	return line_y > point.y;
+	const float line_y = line_k * point.x + line_b; //y=kx+b
+	return point.y > line_y;
 }
 
 float gm::line_b_from_point(float line_k, sf::Vector2f line_point) {
@@ -80,6 +80,12 @@ float gm::line_k_from_points(sf::Vector2f point_1, sf::Vector2f point_2) {
 	float delta_x = point_2.x - point_1.x;
 	float delta_y = point_2.y - point_1.y;
 	return delta_y / delta_x;
+}
+
+float gm::line_angle_from_points(sf::Vector2f point_1, sf::Vector2f point_2) {
+	float delta_x = point_2.x - point_1.x;
+	float delta_y = point_2.y - point_1.y;
+	return std::atan2(delta_y, delta_x);
 }
 
 float gm::random_number(float min, float max) {
