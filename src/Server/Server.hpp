@@ -24,7 +24,9 @@
 #include "ServerSettings.hpp"
 
 ///Server takes input like player's moves and
-///returns data about player's, enemy's and ball's position
+///returns data about player's, enemy's and ball's position.
+///Management of player movement (changing speed) is on GamePage.
+///Management of enemy movement (changing speed) is on inherited Server.
 class Server {
 public:
 	///Create a new server using the specified settings
@@ -34,6 +36,9 @@ public:
 
 	///Update server's state: ball, collisions, movement etc
 	virtual void update() = 0;
+
+	///Speed of player that relative to max (1 - max down, 0 - static, -1 - max up)
+	float player_relative_speed;
 
 	///Get the current rect of the player
 	sf::FloatRect get_player_rect();
@@ -48,17 +53,7 @@ public:
     ///Get current enemy's score
     unsigned int get_enemy_score();
 
-	///Request player to move up
-	virtual void move_player_up();
-	///Request player to move down
-	virtual void move_player_down();
-
 protected:
-	///Request enemy to move up
-	virtual void move_enemy_up();
-	///Request enemy to move down
-	virtual void move_enemy_down();
-
 	GameType server_type;
 
 	sf::Vector2f ball_pos;
@@ -68,6 +63,10 @@ protected:
 	float ball_direction;
 	///Ball's speed (pixels per frame)
 	float ball_speed;
+
+	///Speed of enemy that relative to max (1 - max down, 0 - static, -1 - max up)
+	float enemy_relative_speed;
+
     unsigned int player_score = 0, enemy_score = 0;
     ///If true, ball suspended until input from player or enemy incomes
     bool waiting_for_input = true;
@@ -78,10 +77,16 @@ protected:
 
 	sf::FloatRect player_rect, enemy_rect;
 
-	///Update ball movement, check for collisions and change direction
-	void update_ball_movement();
+	///Update ball movement, check player (enemy) movement and other stuff
+	void internal_update();
 
 	///When someone scores
 	///@param is_player who scored?
 	void scored(bool is_player);
+
+private:
+	///Update player and enemy movement, check collision with window borders
+	void update_player_movement();
+	///Update ball movement, check for collisions and change direction
+	void update_ball_movement();
 };

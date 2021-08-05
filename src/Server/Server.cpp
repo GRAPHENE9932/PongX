@@ -83,45 +83,19 @@ unsigned int Server::get_enemy_score() {
     return enemy_score;
 }
 
-//BEGIN player and enemy movement
-void Server::move_player_up() {
-	gm::move_rect(&player_rect, { 0, -10 });
+void Server::update_player_movement() {
+	if (player_relative_speed != 0 || enemy_relative_speed != 0)
+		waiting_for_input = false;
+	else
+		return;
 
-	if (player_rect.top < 0.0F) //If the player already behind the limit, correct it's position
-		player_rect.top = 0.0F;
+	player_rect.top += player_relative_speed * 10.0F;
+	enemy_rect.top += enemy_relative_speed * 10.0F;
 
-	waiting_for_input = false; //Input received just now
+	player_rect.top = std::clamp(player_rect.top, 0.0F, window_size.y - player_rect.height);
+	enemy_rect.top = std::clamp(enemy_rect.top, 0.0F, window_size.y - enemy_rect.height);
 }
 
-void Server::move_player_down() {
-	gm::move_rect(&player_rect, { 0, 10 });
-
-	//If the player already behind the limit, correct it's position
-	if (player_rect.top > window_size.y - player_rect.height)
-		player_rect.top = window_size.y - player_rect.height;
-
-	waiting_for_input = false; //Input received just now
-}
-
-void Server::move_enemy_up() {
-	gm::move_rect(&enemy_rect, { 0, -10 });
-
-	if (enemy_rect.top < 0.0F) //If the enemy already behind the limit, correct it's position
-		enemy_rect.top = 0.0F;
-
-	waiting_for_input = false; //Input received just now
-}
-
-void Server::move_enemy_down() {
-	gm::move_rect(&enemy_rect, { 0, 10 });
-
-	//If the enemy already behind the limit, correct it's position
-	if (enemy_rect.top > window_size.y - enemy_rect.height)
-		enemy_rect.top = window_size.y - enemy_rect.height;
-
-	waiting_for_input = false; //Input received just now
-}
-//END player and enemy movement
 void Server::update_ball_movement() {
     //Do not move if the ball suspended
 	if (waiting_for_input)
@@ -295,4 +269,9 @@ void Server::scored(bool is_player) {
 												190.0F * DEG2RAD, 350.0F * DEG2RAD);
 
 	waiting_for_input = true; //Suspend
+}
+
+void Server::internal_update() {
+	update_player_movement();
+	update_ball_movement();
 }

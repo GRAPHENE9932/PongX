@@ -24,11 +24,8 @@ LocalMultiplayerServer::LocalMultiplayerServer(sf::Vector2u window_size) : Serve
 
 void LocalMultiplayerServer::update() {
 	//Move the enemy if the specified keys are pressed
-	if (sf::Keyboard::isKeyPressed(enemy_up_key))
-		move_enemy_up();
-	if (sf::Keyboard::isKeyPressed(enemy_down_key))
-		move_enemy_down();
+	enemy_relative_speed = sf::Keyboard::isKeyPressed(enemy_down_key) - sf::Keyboard::isKeyPressed(enemy_up_key);
 
-	//Move the ball
-	update_ball_movement();
+	//Internal update of the abstract server
+	internal_update();
 }

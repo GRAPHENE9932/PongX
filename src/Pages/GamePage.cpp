@@ -64,10 +64,8 @@ GamePage::GamePage(sf::RenderWindow* window, ServerSettings settings) {
 }
 
 void GamePage::render() {
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-		server->move_player_up();
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-		server->move_player_down();
+	server->player_relative_speed =
+		sf::Keyboard::isKeyPressed(sf::Keyboard::S) - sf::Keyboard::isKeyPressed(sf::Keyboard::W);
 
 	//Update server
 	server->update();
