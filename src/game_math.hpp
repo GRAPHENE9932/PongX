@@ -65,6 +65,10 @@ namespace gm {
 	float random_number_double_range(const float min_1, const float max_1,
 									 const float min_2, const float max_2);
 
+	float random_number_triple_range(const float min_1, const float max_1,
+									 const float min_2, const float max_2,
+									 const float min_3, const float max_3);
+
 	///Get the intersection point of the specified vertical line segment and line
 	///@param line_k k of the line. k = tan(angle)
 	///@param line_point random point on line

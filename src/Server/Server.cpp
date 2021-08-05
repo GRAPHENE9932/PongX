@@ -29,8 +29,11 @@ Server::Server(sf::Vector2u window_size) {
 	//Initialize some parameters
 	this->window_size = window_size;
 	ball_pos = { window_size.x * 0.5F, window_size.y * 0.5F }; //Place the ball to the center of the window
-	ball_direction = gm::random_number_double_range(-80.0F * DEG2RAD, 80.0F * DEG2RAD, //Random direction
-													100.0F * DEG2RAD, 260.0F * DEG2RAD);
+	//ball_direction = gm::random_number_double_range(0.0F * DEG2RAD, 75.0F * DEG2RAD, //Random direction
+	//												100.0F * DEG2RAD, 260.0F * DEG2RAD);
+	ball_direction = gm::random_number_triple_range(0.0F * DEG2RAD, 75.0F * DEG2RAD,
+													115.0F * DEG2RAD, 255.0F * DEG2RAD,
+													295.0F * DEG2RAD, 360.0F * DEG2RAD);
 }
 
 Server* Server::create(ServerSettings settings) {
@@ -124,12 +127,9 @@ void Server::update_ball_movement() {
 	if (waiting_for_input)
 		return;
 
-	///Direction before the modifications on this frame
-	auto old_direction = ball_direction;
-
-	//Predict the next ball position (ignoring everything, but speed and direction)
+	//Move ball by direction
 	ball_pos +=
-		sf::Vector2f(std::sin(old_direction) * ball_speed, std::cos(old_direction) * ball_speed);
+		sf::Vector2f(std::cos(ball_direction) * ball_speed, std::sin(ball_direction) * ball_speed);
 
 	//BEGIN check collision of next ball with bounds of window
 	bool top_win_bound = ball_pos.y - ball_radius <= 0; //Top global bound
@@ -144,7 +144,7 @@ void Server::update_ball_movement() {
 		// |               /|\                 |
 		// |    Before -> / | \ <- After       |
 		// |             /  |  \               |
-		ball_direction = 180.0F * DEG2RAD - ball_direction;
+		ball_direction = 360.0F * DEG2RAD - ball_direction;
 	}
 	//END check collision with bounds of window
 	//We will use "rounded rect - point" model, because it is identical but simplier than "rect - circle"
@@ -187,7 +187,7 @@ void Server::update_ball_movement() {
 				// |               /|\                 |
 				// |    Before -> / | \ <- After       |
 				// |             /  |  \               |
-				ball_direction = 180.0F * DEG2RAD - ball_direction;
+				ball_direction = 360.0F * DEG2RAD - ball_direction;
 				break;
 			}
 			case 2:
@@ -199,7 +199,7 @@ void Server::update_ball_movement() {
 				//                             /||
 				//                   After -> / ||
 				//                           /  ||
-				ball_direction = 360.0F * DEG2RAD - ball_direction;
+				ball_direction = 180.0F * DEG2RAD - ball_direction + 360.0F * DEG2RAD;
 				break;
 			}
 			case 5:

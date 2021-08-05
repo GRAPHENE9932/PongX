@@ -110,6 +110,23 @@ float gm::random_number_double_range(const float min_1, const float max_1,
 		return min_2 + raw_random - (max_1 - min_1);
 }
 
+float gm::random_number_triple_range(const float min_1, const float max_1,
+									 const float min_2, const float max_2,
+									 const float min_3, const float max_3) {
+	//Compute the sum of deltas
+	float max = (max_1 - min_1) + (max_2 - min_2) + (max_3 - min_3);
+
+	//Generate raw random number
+	float raw_random = random_number(0.0F, max);
+
+	if (raw_random <= max_1 - min_1)
+		return min_1 + raw_random;
+	else if (raw_random <= (max_1 - min_1) + (max_2 - min_2))
+		return min_2 + raw_random;
+	else
+		return min_3 + raw_random;
+}
+
 bool gm::ver_segment_line_intersection(float line_k, float line_b,
 									   float line_seg_y_1, float line_seg_y_2,
 									   float line_seg_x, sf::Vector2f& intersection_point) {
